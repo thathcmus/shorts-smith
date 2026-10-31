@@ -269,7 +269,7 @@ def main():
                     print(f"     👉 Prompt tạo ảnh: \"{prm[:75]}...\"")
             print("\n💡 HƯỚNG DẪN KHẮC PHỤC:")
             print("  Cách 1 (Dựng video hoàn chỉnh):")
-            print("     Lấy các prompt trên tạo ảnh AI 9:16 rồi lưu vào đúng tên file trong 'sample_assets/'.")
+            print("     Lấy các prompt trên tạo ảnh AI 9:16 rồi lưu vào đúng đường dẫn trong 'sample_assets/<folder_video>/'.")
             print("  Cách 2 (Dựng thử preview ngay với ảnh giữ chỗ):")
             print(f"     Chạy thêm cờ --placeholder:")
             print(f"     👉 python generate_video.py -s {args.script} --placeholder")

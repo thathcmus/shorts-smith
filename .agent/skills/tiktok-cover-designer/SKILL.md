@@ -66,7 +66,7 @@ Sử dụng công cụ `engine.cover_designer`:
 python -m engine.cover_designer --id 001 --badge "BÍ MẬT ĐEN TỐI" --title "INTERNET ĐÃ CHẾT?" --subtitle "90% MẠNG XÃ HỘI LÀ BOT AI" --style neon_yellow
 
 # Hoặc tạo ảnh bìa từ một ảnh tĩnh trong thư mục sample_assets:
-python -m engine.cover_designer --image sample_assets/richat.jpg --badge "BÍ ẨN ĐẠI DƯƠNG" --title "MẮT SAHARA" --subtitle "ATLANTIS ĐÃ ĐƯỢC TÌM THẤY?" --output output/covers/002_cover_mat_sahara_atlantis.jpg
+python -m engine.cover_designer --image sample_assets/002_atlantis_sahara/002_atlantis_sahara_1.jpg --badge "BÍ ẨN ĐẠI DƯƠNG" --title "MẮT SAHARA" --subtitle "ATLANTIS ĐÃ ĐƯỢC TÌM THẤY?" --output output/covers/002_cover_mat_sahara_atlantis.jpg
 ```
 
 ### Bước 3: Đồng bộ và kiểm tra kết quả

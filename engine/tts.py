@@ -24,29 +24,46 @@ async def synthesize_speech_with_words(
     voice: str = DEFAULT_VOICE,
     rate: str = DEFAULT_SPEECH_RATE,
     volume: str = "+0%",
-    pitch: str = "+0Hz"
+    pitch: str = "+0Hz",
+    max_retries: int = 3
 ) -> tuple[float, list]:
     """
     Chuyển văn bản thành giọng nói MP3 qua Edge-TTS và ghi nhận timestamp của từng từ (WordBoundary).
+    Có cơ chế tự động thử lại (retry) nếu gặp lỗi mạng hoặc ngắt kết nối đột xuất.
     Trả về: (thời lượng_giây, danh_sách_từ_kèm_timestamp)
     """
     os.makedirs(os.path.dirname(os.path.abspath(output_audio)), exist_ok=True)
-    comm = edge_tts.Communicate(text, voice, rate=rate, volume=volume, pitch=pitch, boundary="WordBoundary")
     
-    words = []
-    with open(output_audio, "wb") as f:
-        async for chunk in comm.stream():
-            if chunk["type"] == "audio":
-                f.write(chunk["data"])
-            elif chunk["type"] == "WordBoundary":
-                words.append({
-                    "word": chunk["text"],
-                    "start": chunk["offset"] / 10000000.0,
-                    "end": (chunk["offset"] + chunk["duration"]) / 10000000.0
-                })
-                
-    dur = get_audio_duration(output_audio)
-    return dur, words
+    # Làm sạch ký tự dấu chấm lửng tránh kẹt parser TTS
+    clean_text = text.replace("...", ". ").replace("..", ". ").strip()
+    
+    last_err = None
+    for attempt in range(max_retries):
+        try:
+            comm = edge_tts.Communicate(clean_text, voice, rate=rate, volume=volume, pitch=pitch, boundary="WordBoundary")
+            words = []
+            with open(output_audio, "wb") as f:
+                async for chunk in comm.stream():
+                    if chunk["type"] == "audio":
+                        f.write(chunk["data"])
+                    elif chunk["type"] == "WordBoundary":
+                        words.append({
+                            "word": chunk["text"],
+                            "start": chunk["offset"] / 10000000.0,
+                            "end": (chunk["offset"] + chunk["duration"]) / 10000000.0
+                        })
+            
+            if os.path.exists(output_audio) and os.path.getsize(output_audio) > 0:
+                dur = get_audio_duration(output_audio)
+                return dur, words
+            else:
+                raise RuntimeError("Audio file empty after TTS generation")
+        except Exception as e:
+            last_err = e
+            if attempt < max_retries - 1:
+                await asyncio.sleep(1.0 * (attempt + 1))
+            else:
+                raise last_err
 
 def format_ass_timestamp(seconds: float) -> str:
     """Đổi giây sang định dạng thời gian ASS: H:MM:SS.cs"""

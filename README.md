@@ -61,7 +61,10 @@ Hệ thống sản xuất video AI ngắn (Shorts / Reels / TikTok) tự động
 │   │       └── 001_metadata.json
 │   ├── qa_verification/                # Frame trích xuất thẩm định chất lượng thực tế
 │   └── STATUS.md                       # Bảng theo dõi tiến độ đăng video Markdown
-├── sample_assets/                      # Kho hình ảnh / video footage mẫu
+├── sample_assets/                      # Kho hình ảnh/video phân chia theo từng video ({seq}_{slug}/)
+│   ├── 001_dead_internet/
+│   ├── 002_atlantis_sahara/
+│   └── ...
 ├── temp_build/                         # Thư mục tệp tạm thời trong lúc render
 └── generate_video.py                   # Điểm vào CLI chính của hệ sinh thái
 ```
@@ -177,7 +180,7 @@ python -m engine.cover_designer --id 001 --badge "BÍ MẬT ĐEN TỐI" --title 
 python -m engine.cover_designer --id 002 --badge "CẢNH BÁO" --title "MẮT SAHARA" --subtitle "ATLANTIS ĐÃ ĐƯỢC TÌM THẤY?" --style fire_red
 
 # 3. Tạo ảnh bìa từ một ảnh tĩnh bất kỳ
-python -m engine.cover_designer --image sample_assets/richat.jpg --badge "BÍ ẨN CỔ ĐẠI" --title "THÀNH PHỐ MẤT TÍCH" --subtitle "BÍ MẬT 10.000 NĂM TRƯỚC" --output output/covers/custom_atlantis.jpg
+python -m engine.cover_designer --image sample_assets/002_atlantis_sahara/002_atlantis_sahara_1.jpg --badge "BÍ ẨN CỔ ĐẠI" --title "THÀNH PHỐ MẤT TÍCH" --subtitle "BÍ MẬT 10.000 NĂM TRƯỚC" --output output/covers/custom_atlantis.jpg
 ```
 
 ---
@@ -283,42 +286,42 @@ Hệ thống cho phép bạn tùy biến toàn bộ nội dung kịch bản qua 
     {
       "role": "hook",
       "text": "Có bao giờ bạn nhận ra... mạng Internet gần như đã chết từ nhiều năm trước?",
-      "media": "sample_assets/matrix_code.jpg",
+      "media": "sample_assets/001_dead_internet/001_dead_internet_1.jpg",
       "effect": "zoom_in_fast",
       "rate": "+50%"
     },
     {
       "role": "scale",
       "text": "Một báo cáo bảo mật chỉ ra rằng, hơn 60% lưu lượng truy cập toàn cầu hiện nay không hề đến từ con người.",
-      "media": "sample_assets/botnet.jpg",
+      "media": "sample_assets/001_dead_internet/001_dead_internet_2.jpg",
       "effect": "pan_down",
       "rate": "+50%"
     },
     {
       "role": "anomaly",
       "text": "Hàng triệu tài khoản mạng xã hội đang tự động đăng bài, tự động bình luận và tự thả tim cho nhau.",
-      "media": "sample_assets/server_room.jpg",
+      "media": "sample_assets/001_dead_internet/001_dead_internet_3.jpg",
       "effect": "zoom_in_slow",
       "rate": "+50%"
     },
     {
       "role": "theory",
       "text": "Giả thuyết Internet Chết cho rằng các tập đoàn công nghệ lớn đang dùng AI để tạo ra một thế giới ảo giả lập.",
-      "media": "sample_assets/ai_brain.jpg",
+      "media": "sample_assets/001_dead_internet/001_dead_internet_4.jpg",
       "effect": "zoom_out",
       "rate": "+50%"
     },
     {
       "role": "coincidence",
       "text": "Mục đích là thao túng hành vi mua sắm và định hình nhận thức của phần ít ỏi người thật còn sót lại.",
-      "media": "sample_assets/puppet.jpg",
+      "media": "sample_assets/001_dead_internet/001_dead_internet_5.jpg",
       "effect": "zoom_in_slow",
       "rate": "+50%"
     },
     {
       "role": "cta",
       "text": "Bạn có chắc người đang tranh luận với bạn hôm nay là con người? Hãy để lại suy nghĩ dưới bình luận!",
-      "media": "sample_assets/human_silhouette.jpg",
+      "media": "sample_assets/001_dead_internet/001_dead_internet_6.jpg",
       "effect": "zoom_in_fast",
       "rate": "+50%"
     }

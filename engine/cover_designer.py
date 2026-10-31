@@ -305,7 +305,7 @@ def design_cover_for_video_id(
         except Exception:
             pass
 
-    # Cách 2: Tìm trực tiếp trong sample_assets/
+    # Cách 2: Tìm trực tiếp trong sample_assets/ (hỗ trợ cả cấu trúc subfolder theo video và dạng phẳng)
     if not clean_bg:
         asset_patterns = [
             f"{seq}_{slug}_1.jpg",
@@ -315,12 +315,40 @@ def design_cover_for_video_id(
             f"{slug}.jpg",
             f"*{slug}*1.jpg",
             f"*{slug}*.jpg",
+            "1.jpg",
+            "scene_1.jpg",
+            "*_1.jpg",
         ]
-        for pat in asset_patterns:
-            matches = glob.glob(os.path.join(BASE_DIR, "sample_assets", pat))
-            if matches:
-                clean_bg = matches[0]
+        # Danh sách các thư mục ưu tiên tìm kiếm
+        candidate_dirs = [
+            os.path.join(BASE_DIR, "sample_assets", f"{seq}_{slug}"),
+            os.path.join(BASE_DIR, "sample_assets", slug),
+        ]
+        # Bổ sung các thư mục bắt đầu bằng số thứ tự seq (ví dụ: sample_assets/001_dead_internet)
+        for d in glob.glob(os.path.join(BASE_DIR, "sample_assets", f"{seq}*")):
+            if os.path.isdir(d) and d not in candidate_dirs:
+                candidate_dirs.append(d)
+        # Bổ sung thư mục gốc sample_assets/ để tương thích ngược
+        candidate_dirs.append(os.path.join(BASE_DIR, "sample_assets"))
+
+        for c_dir in candidate_dirs:
+            if not os.path.exists(c_dir):
+                continue
+            for pat in asset_patterns:
+                matches = glob.glob(os.path.join(c_dir, pat))
+                if matches:
+                    clean_bg = matches[0]
+                    break
+            if clean_bg:
                 break
+
+        # Nếu vẫn chưa thấy, quét đệ quy toàn bộ thư mục sample_assets/
+        if not clean_bg:
+            for pat in [f"*{slug}*1.jpg", f"*{slug}*.jpg", f"{seq}*1.jpg"]:
+                matches = glob.glob(os.path.join(BASE_DIR, "sample_assets", "**", pat), recursive=True)
+                if matches:
+                    clean_bg = matches[0]
+                    break
 
     bg_source = clean_bg if clean_bg else video_source
     if clean_bg:

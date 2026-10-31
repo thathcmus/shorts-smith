@@ -63,6 +63,8 @@ Khi người dùng yêu cầu: *"Làm video về [Chủ đề]"*, hãy xây dự
      - 🟢 `POSTED`: Đã đăng lên kênh TikTok (kèm ngày giờ, link video thực tế).
      - 🔴 `REJECTED`: Sẽ không đăng (bị hủy hoặc lưu trữ nội bộ, kèm lý do).
    - Tự động đồng bộ ra bảng điều khiển trực quan tại `output/STATUS.md` và tra cứu/cập nhật nhanh qua CLI `python -m engine.status`.
+7. **Tổ chức hình ảnh theo từng thư mục video:**
+   - Toàn bộ ảnh tĩnh/footage phục vụ cho từng video được lưu độc lập tại `sample_assets/{seq}_{slug}/` (ví dụ: `sample_assets/003_gunung_padang/003_gunung_padang_1.jpg` đến `..._6.jpg`), giúp quản lý cách ly tuyệt đối, không trùng lặp khi mở rộng hàng chục video.
 
 ---
 

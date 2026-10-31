@@ -1,32 +1,32 @@
 {
   "scenes": [
     {
-      "image": "sample_assets/dram1.jpg",
+      "image": "sample_assets/example_pyramid/dram1.jpg",
       "text": "Những gì sách giáo khoa dạy bạn về Kim Tự Tháp Ai Cập... có thể là một lời nói dối thế kỷ!",
       "effect": "zoom_in_fast"
     },
     {
-      "image": "sample_assets/dram2.jpg",
+      "image": "sample_assets/example_pyramid/dram2.jpg",
       "text": "Hai phẩy ba triệu khối cự thạch, nặng từ hai đến tám mươi tấn mỗi khối. Chỉ với búa đồng và dây thừng, người cổ đại làm sao có thể nâng chúng lên độ cao một trăm bốn mươi mét?",
       "effect": "pan_down"
     },
     {
-      "image": "sample_assets/dram3.jpg",
+      "image": "sample_assets/example_pyramid/dram3.jpg",
       "text": "Kỳ lạ hơn nữa, bên trong Đại Kim Tự Tháp Giza chưa từng tìm thấy bất kỳ một xác ướp Pharaoh nào, cũng không hề có một dòng chữ tượng hình ca tụng lăng mộ!",
       "effect": "zoom_in_slow"
     },
     {
-      "image": "sample_assets/dram4.jpg",
+      "image": "sample_assets/example_pyramid/dram4.jpg",
       "text": "Nhiều nhà vật lý hiện đại tin rằng: Cấu trúc đá granit chứa tinh thể thạch anh này thực chất là một cỗ máy phát điện không dây khổng lồ của một nền văn minh tiền sử đã biến mất!",
       "effect": "zoom_out"
     },
     {
-      "image": "sample_assets/dram5.jpg",
+      "image": "sample_assets/example_pyramid/dram5.jpg",
       "text": "Kinh ngạc nhất, tọa độ địa lý chính xác của đỉnh Kim Tự Tháp trùng khớp hoàn toàn với vận tốc ánh sáng: hai trăm chín mươi chín triệu bảy trăm chín mươi hai nghìn bốn trăm năm mươi tám mét trên giây!",
       "effect": "zoom_in_slow"
     },
     {
-      "image": "sample_assets/dram6.jpg",
+      "image": "sample_assets/example_pyramid/dram6.jpg",
       "text": "Nếu không phải con người thời đồ đồng xây dựng... thì ai mới là kẻ thực sự đã tạo ra kỳ quan này? Hãy để lại suy nghĩ của bạn dưới phần bình luận!",
       "effect": "zoom_in_fast"
     }
