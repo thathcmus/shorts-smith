@@ -10,6 +10,7 @@ from engine.effects import (
 )
 from engine.render import render_scene_clip, assemble_final_video, get_best_bgm_track
 from engine.script_generator import load_script_from_file, save_script_to_file
+from engine.qa_inspector import inspect_video_output, run_qa_audit
 
 __all__ = [
     "FFMPEG_EXE",
@@ -25,4 +26,6 @@ __all__ = [
     "get_best_bgm_track",
     "load_script_from_file",
     "save_script_to_file",
+    "inspect_video_output",
+    "run_qa_audit",
 ]
