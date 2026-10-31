@@ -27,6 +27,9 @@ VOICES = {
     "en_female": "en-US-JennyNeural",   # Nữ tiếng Anh tự nhiên
 }
 DEFAULT_VOICE = VOICES["vi_nam"]
+DEFAULT_SPEECH_RATE = "+50%"  # Tốc độ đọc 1.5x chuẩn TikTok dồn dập, giữ chân người xem
+DEFAULT_PITCH = "+0Hz"
+
 
 # Thư mục lưu trữ
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

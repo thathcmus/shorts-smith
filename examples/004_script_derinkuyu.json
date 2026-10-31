@@ -1,0 +1,40 @@
+{
+  "scenes": [
+    {
+      "image": "sample_assets/004_derinkuyu_1.jpg",
+      "text": "Năm một nghìn chín trăm sáu mươi ba, một người đàn ông Thổ Nhĩ Kỳ đập vỡ bức tường tầng hầm nhà mình... và bàng hoàng phát hiện cả một thành phố ngầm mười tám tầng sâu tám mươi lăm mét dưới lòng đất!",
+      "effect": "zoom_in_fast",
+      "prompt": "Dramatic close-up of a shattered basement stone wall revealing a dark mysterious ancient subterranean stone staircase descending into the abyss, warm torchlight, cinematic thriller, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/004_derinkuyu_2.jpg",
+      "text": "Đây là thành phố ngầm Derinkuyu, một mê cung khổng lồ được khoét sâu vào lòng đá núi lửa, đủ sức chứa hơn hai mươi nghìn người cùng đầy đủ chuồng gia súc, kho lương thực và giếng nước ngầm độc lập!",
+      "effect": "pan_down",
+      "prompt": "Vast multi-level underground ancient city carved into volcanic tuff rock, glowing lanterns illuminating corridors, arches, ventilation shafts and ancient living chambers, cinematic 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/004_derinkuyu_3.jpg",
+      "text": "Hệ thống hơn mười lăm nghìn trục thông khí tinh vi đến mức ngay cả ở tầng sâu nhất, không khí vẫn trong lành như trên mặt đất. Nhưng điều rùng rợn nhất nằm ở những cánh cửa đá khổng lồ nặng nửa tấn...",
+      "effect": "zoom_in_slow",
+      "prompt": "Massive ancient circular rolling stone door sealing an underground tunnel passage, heavy stone wheel with central hole, claustrophobic moody lighting, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/004_derinkuyu_4.jpg",
+      "text": "Những cánh cửa đá tròn này chỉ có thể lăn và khóa chặt từ BÊN TRONG. Nghĩa là họ xây dựng toàn bộ boong-ke khổng lồ này không phải để giam giữ ai... mà là để tuyệt vọng trốn tránh một mối đe dọa kinh hoàng từ bên ngoài!",
+      "effect": "zoom_out",
+      "prompt": "Ancient terrified people rolling a colossal circular stone door shut from inside a dark underground cavern, dramatic shadows, cinematic epic documentary lighting, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/004_derinkuyu_5.jpg",
+      "text": "Các nhà khảo cổ đặt giả thuyết: Công trình này được tạo ra để sinh tồn qua kỷ Younger Dryas, khi các mảnh vỡ thiên thạch dội lửa xuống Trái Đất và gây ra mùa đông băng giá kéo dài hàng nghìn năm!",
+      "effect": "zoom_in_slow",
+      "prompt": "Apocalyptic meteor storm crashing down onto the barren prehistoric Anatolian landscape, burning skies, people fleeing into underground caves, cinematic sci-fi disaster scene, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/004_derinkuyu_6.jpg",
+      "text": "Nếu không phải một thảm họa diệt vong từ bầu trời, điều gì có thể ép hai mươi nghìn con người phải vĩnh viễn sống dưới lòng đất tối tăm? Hãy để lại ý kiến của bạn!",
+      "effect": "zoom_in_fast",
+      "prompt": "A solitary silhouette standing at the entrance looking up towards the distant surface light from deep within Derinkuyu vertical shaft, dramatic volumetric rays, 9:16 aspect ratio"
+    }
+  ]
+}

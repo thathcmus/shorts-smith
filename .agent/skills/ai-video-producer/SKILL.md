@@ -50,14 +50,28 @@ Khi người dùng yêu cầu: *"Làm video về [Chủ đề]"*, hãy xây dự
    - Kết hợp Ken Burns với **Color Grading** (tăng contrast + saturation) và **Vignette** (tối 4 góc viền màn hình) mang phong cách phim tài liệu Hollywood.
    - Hỗ trợ cả **Video clip (.mp4)** và **Ảnh tĩnh (.jpg)**.
 
+4. **Tốc độ đọc 1.5x dồn dập chuẩn TikTok:**
+   - Cấu hình mặc định toàn hệ thống là `DEFAULT_SPEECH_RATE = "+50%"` trong `engine/config.py`, bắt nhịp nhanh, dứt khoát và tối ưu giữ chân người xem.
+5. **Không gian xuất bản trọn gói đánh số thứ tự đồng bộ (Sequential Publishing & Caption Workspace):**
+   - Hệ thống tự động phát hiện và cấp phát số thứ tự 3 chữ số (`001_`, `002_`, `003_`...) để **đối chiếu 1:1 tuyệt đối giữa Video và Caption**:
+     - `output/{seq}_video_{slug}.mp4`: Video thành phẩm có tiền tố số thứ tự.
+     - `output/cap/{seq}_cap_{slug}.txt`: File Caption TikTok chuẩn SEO (Tiêu đề in hoa, Hook, Kêu gọi bình luận CTA, và dàn Hashtags hot) mang cùng tiền tố `{seq}_` để mở copy ngay.
+     - `output/publish_packages/{seq}_{slug}/`: Gói xuất bản độc lập chứa trọn bộ `{seq}_video_{slug}.mp4`, `{seq}_cap_{slug}.txt`, `{seq}_cover_{slug}.jpg` (ảnh bìa thumbnail 1080x1920) và `{seq}_metadata.json`.
+6. **Theo dõi trạng thái vòng đời xuất bản (Publishing Status Tracker):**
+   - Quản lý 3 trạng thái rõ ràng của từng video:
+     - 🟡 `READY`: Video đã dựng xong, chưa đăng (sẵn sàng đăng).
+     - 🟢 `POSTED`: Đã đăng lên kênh TikTok (kèm ngày giờ, link video thực tế).
+     - 🔴 `REJECTED`: Sẽ không đăng (bị hủy hoặc lưu trữ nội bộ, kèm lý do).
+   - Tự động đồng bộ ra bảng điều khiển trực quan tại `output/STATUS.md` và tra cứu/cập nhật nhanh qua CLI `python -m engine.status`.
+
 ---
 
 ## 3. Cách sử dụng
 
 ```bash
-# Chạy với kịch bản mặc định và nhạc nền điện ảnh tự động
-python generate_video.py --output video_thanh_pham.mp4
+# Chạy với kịch bản và tự động đóng gói Caption + Video
+python generate_video.py --script examples/script_dead_internet.json --output video_dead_internet.mp4
 
-# Chọn giọng đọc và bài nhạc nền riêng
-python generate_video.py --voice vi-VN-NamMinhNeural --bgm assets/audio/output000.mp3 --output video_thanh_pham.mp4
+# Tùy biến tốc độ đọc nếu muốn (mặc định đã là +50% ~ 1.5x)
+python generate_video.py --rate +30% --output video_thanh_pham.mp4
 ```

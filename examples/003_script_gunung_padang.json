@@ -1,0 +1,40 @@
+{
+  "scenes": [
+    {
+      "image": "sample_assets/003_gunung_padang_1.jpg",
+      "text": "Điều gì sẽ xảy ra nếu tôi nói với bạn: Kim tự tháp cổ xưa nhất nhân loại không nằm ở Ai Cập... mà đang lộ diện ngay tại Đông Nam Á, ẩn sâu dưới một ngọn đồi xanh ngắt?",
+      "effect": "zoom_in_fast",
+      "prompt": "Cinematic drone aerial shot revealing a mysterious lush green terraced hill in West Java Indonesia, ancient stone megalithic terraces, morning mist, dramatic sun rays, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/003_gunung_padang_2.jpg",
+      "text": "Các nhà địa chất quốc tế đã sử dụng radar xuyên đất và khoan địa chấn sâu hàng chục mét. Kết quả gây chấn động: ngọn đồi này thực chất là một cấu trúc kim tự tháp nhân tạo khổng lồ cao tới ba mươi mét!",
+      "effect": "pan_down",
+      "prompt": "Modern geological expedition using ground penetrating radar (GPR) scanner on rocky ancient hill, 3D holographic digital scan wireframe of underground layers, cinematic documentary lighting, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/003_gunung_padang_3.jpg",
+      "text": "Kinh hoàng hơn nữa: Phương pháp định tuổi phóng xạ carbon xác nhận tầng sâu nhất của công trình có niên đại lên tới hai mươi lăm nghìn năm – trước cả khi nền văn minh Lưỡng Hà hay Ai Cập cổ đại xuất hiện hàng chục thiên niên kỷ!",
+      "effect": "zoom_in_slow",
+      "prompt": "Archaeological deep excavation trench revealing ancient carved columnar basalt megalithic blocks stacked by prehistoric humans, dust particles in light beam, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/003_gunung_padang_4.jpg",
+      "text": "Sóng âm địa chấn còn phát hiện nhiều căn phòng rỗng bí mật hình chữ nhật nằm sâu trong lòng khối đá, được niêm phong hoàn hảo bằng một loại vữa kết dính cổ đại mà khoa học chưa từng biết đến.",
+      "effect": "zoom_out",
+      "prompt": "Architectural cross-section cutaway 3D concept of Gunung Padang, revealing glowing hidden underground chambers and labyrinth sealed deep inside basalt core, cinematic sci-fi archaeological visualization, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/003_gunung_padang_5.jpg",
+      "text": "Hai mươi lăm nghìn năm trước, Đông Nam Á từng là một đại lục Sundaland trù phú trước khi các trận đại hồng thủy do băng tan cuối kỷ băng hà nhấn chìm tất cả xuống đáy biển!",
+      "effect": "zoom_in_slow",
+      "prompt": "Prehistoric ancient Sundaland civilization submerged by rising ocean waves, giant tidal surges engulfing prehistoric megalithic stone city, apocalyptic cinematic lighting, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/003_gunung_padang_6.jpg",
+      "text": "Theo bạn, bên trong những căn phòng ngầm hai mươi lăm nghìn năm tuổi kia đang cất giấu bí mật gì của tổ tiên? Hãy để lại suy đoán của bạn dưới phần bình luận!",
+      "effect": "zoom_in_fast",
+      "prompt": "Epic sunset over Gunung Padang megalithic ruins, ancient basalt stones casting long shadows, mysterious golden glow, cinematic mystery poster look, 9:16 aspect ratio"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ Sản xuất video AI chất lượng cao: Phụ đề TikTok Karaoke Dynamic, N
 import argparse
 import asyncio
 import os
+import re
 import sys
 import time
 
@@ -23,18 +24,27 @@ from engine.config import (
     RESOLUTIONS,
     VOICES,
     DEFAULT_VOICE,
+    DEFAULT_SPEECH_RATE,
+    DEFAULT_PITCH,
     DEFAULT_FPS,
     OUTPUT_DIR,
     TEMP_DIR,
 )
 from engine.tts import synthesize_speech_with_words, generate_tiktok_style_subtitles
 from engine.render import render_scene_clip, assemble_final_video, get_best_bgm_track
-from engine.script_generator import load_script_from_file
+from engine.script_generator import (
+    load_script_from_file,
+    find_script_by_index_or_path,
+    derive_default_output_name,
+)
+from engine.publisher import create_publish_workspace, get_next_sequence_prefix
 
 async def run_pipeline(
     scenes: list,
     output_filename: str = None,
     voice: str = DEFAULT_VOICE,
+    speech_rate: str = DEFAULT_SPEECH_RATE,
+    pitch: str = DEFAULT_PITCH,
     aspect: str = "vertical",
     bgm_path: str = None,
     bgm_volume: float = 0.22
@@ -42,9 +52,23 @@ async def run_pipeline(
     start_time = time.time()
     width, height = RESOLUTIONS.get(aspect, RESOLUTIONS["vertical"])
 
+    # Hỗ trợ alias viết tắt cho voice (vi_nu, vi_nam, hoaimy, namminh...)
+    voice = VOICES.get(voice, voice)
+    if voice.lower() in ["nu", "hoaimy", "hoai_my"]:
+        voice = VOICES["vi_nu"]
+    elif voice.lower() in ["nam", "namminh", "nam_minh"]:
+        voice = VOICES["vi_nam"]
+
+    # Tự động gắn tiền tố số thứ tự (001_, 002_...) nếu chưa có để đồng bộ 1:1 với Caption
     if not output_filename:
+        seq = get_next_sequence_prefix(OUTPUT_DIR)
         timestamp = int(time.time())
-        output_filename = f"ai_video_{timestamp}.mp4"
+        output_filename = f"{seq}_video_{timestamp}.mp4"
+    else:
+        m = re.match(r"^\d{2,4}_", output_filename)
+        if not m:
+            seq = get_next_sequence_prefix(OUTPUT_DIR)
+            output_filename = f"{seq}_{output_filename}"
 
     output_video_path = os.path.join(OUTPUT_DIR, output_filename)
     job_temp_dir = os.path.join(TEMP_DIR, f"job_{int(time.time())}")
@@ -56,7 +80,7 @@ async def run_pipeline(
     print("=================================================================")
     print(f"🎬 AI VIDEO PRODUCER V2 (TIKTOK DYNAMIC SUBTITLES & CINEMATIC AUDIO)")
     print(f"📐 Khung hình: {aspect.upper()} ({width}x{height})")
-    print(f"🎙️ Giọng đọc: {voice}")
+    print(f"🎙️ Giọng đọc: {voice} (Tốc độ: {speech_rate} | Cao độ Pitch: {pitch})")
     print(f"🎵 Nhạc nền BGM: {os.path.basename(selected_bgm) if selected_bgm else 'Không'}")
     print(f"📁 Xuất ra: {output_video_path}")
     print("=================================================================")
@@ -69,10 +93,12 @@ async def run_pipeline(
     for idx, scene in enumerate(scenes):
         audio_file = os.path.join(job_temp_dir, f"audio_scene_{idx}.mp3")
         text = scene["text"]
-        rate = scene.get("rate", "-1%")
-        print(f"   - Cảnh {idx+1}/{len(scenes)}: {text[:50]}...")
+        rate = scene.get("rate", speech_rate)
+        cur_pitch = scene.get("pitch", pitch)
+        cur_voice = VOICES.get(scene.get("voice", voice), scene.get("voice", voice))
+        print(f"   - Cảnh {idx+1}/{len(scenes)} [{rate} | {cur_pitch}]: {text[:50]}...")
 
-        dur, words = await synthesize_speech_with_words(text, audio_file, voice=voice, rate=rate)
+        dur, words = await synthesize_speech_with_words(text, audio_file, voice=cur_voice, rate=rate, pitch=cur_pitch)
         padded_dur = dur + 0.35  # Đệm ngắt nghỉ kịch tính giữa các cảnh
         
         scenes_data.append({
@@ -123,38 +149,64 @@ async def run_pipeline(
         temp_dir=job_temp_dir
     )
 
+    # BƯỚC 5: Đóng gói không gian xuất bản TikTok & Caption (output/cap và output/publish_packages)
+    print(f"\n[5/5] 📦 Đang đóng gói không gian xuất bản TikTok (Caption + Thumbnail)...")
+    pub_info = create_publish_workspace(
+        video_path=output_video_path,
+        scenes=scenes,
+        duration=total_duration
+    )
+
     elapsed = time.time() - start_time
     file_size_mb = os.path.getsize(output_video_path) / (1024 * 1024)
     print("\n=================================================================")
     print(f"✅ HOÀN TẤT TRONG {elapsed:.1f} GIÂY!")
     print(f"🎉 Tệp video: {output_video_path} ({file_size_mb:.2f} MB)")
+    print(f"📝 Caption TikTok: {pub_info['cap_file']}")
+    print(f"🖼️ Ảnh bìa Cover: {pub_info['cover_file']}")
+    print(f"📦 Thư mục trọn gói: {pub_info['package_dir']}")
     print("=================================================================")
     return output_video_path
 
 def main():
     parser = argparse.ArgumentParser(description="AI Video Producer V2 CLI")
-    parser.add_argument("--script", "-s", type=str, help="Đường dẫn tệp JSON kịch bản (nếu có)")
-    parser.add_argument("--voice", "-v", type=str, default=DEFAULT_VOICE, help="Tên giọng đọc Edge-TTS")
+    parser.add_argument("--script", "-s", type=str, help="Index số (ví dụ: 001, 3, 4...), từ khóa slug hoặc đường dẫn tệp JSON kịch bản")
+    parser.add_argument("--voice", "-v", type=str, default=DEFAULT_VOICE, help="Tên giọng đọc Edge-TTS (vi_nam, vi_nu, vi-VN-HoaiMyNeural...)")
+    parser.add_argument("--rate", "-r", type=str, default=DEFAULT_SPEECH_RATE, help="Tốc độ giọng đọc (+50%% tương đương 1.5x, ví dụ: +0%%, +25%%, +50%%)")
+    parser.add_argument("--pitch", "-p", type=str, default=DEFAULT_PITCH, help="Cao độ giọng đọc (+0Hz, -6Hz trầm u tối, +5Hz thanh cao)")
     parser.add_argument("--bgm", "-b", type=str, default=None, help="Đường dẫn tệp nhạc nền MP3 riêng")
     parser.add_argument("--output", "-o", type=str, default=None, help="Tên tệp xuất MP4")
     parser.add_argument("--aspect", "-a", type=str, default="vertical", choices=["vertical", "horizontal"], help="Tỉ lệ: vertical (9:16) hoặc horizontal (16:9)")
     parser.add_argument("--bgm-volume", type=float, default=0.22, help="Âm lượng nhạc nền (0.0 đến 1.0)")
     args = parser.parse_args()
 
-    if args.script and os.path.exists(args.script):
-        scenes = load_script_from_file(args.script)
-    else:
-        # Kịch bản mặc định lấy từ ví dụ
-        default_script = os.path.join("examples", "script_pyramid_example.json")
-        if os.path.exists(default_script):
-            scenes = load_script_from_file(default_script)
-        else:
-            raise FileNotFoundError("Không tìm thấy tệp kịch bản.")
+    # Phân giải kịch bản theo index số (001, 3, 4...), slug hoặc đường dẫn file
+    try:
+        script_file = find_script_by_index_or_path(args.script)
+    except FileNotFoundError as e:
+        print(f"\n{e}")
+        sys.exit(1)
+
+    if not script_file or not os.path.exists(script_file):
+        print(f"❌ Không tìm thấy tệp kịch bản nào phù hợp với: '{args.script}'")
+        sys.exit(1)
+
+    print(f"📖 Đang tải kịch bản: {script_file}")
+    scenes = load_script_from_file(script_file)
+
+    # Tự động suy luận tên tệp video xuất ra nếu chưa chỉ định --output
+    output_filename = args.output
+    if not output_filename and script_file:
+        output_filename = derive_default_output_name(script_file)
+        if output_filename:
+            print(f"🎯 Tự động đặt tên video xuất ra: {output_filename}")
 
     asyncio.run(run_pipeline(
         scenes=scenes,
-        output_filename=args.output,
+        output_filename=output_filename,
         voice=args.voice,
+        speech_rate=args.rate,
+        pitch=args.pitch,
         aspect=args.aspect,
         bgm_path=args.bgm,
         bgm_volume=args.bgm_volume

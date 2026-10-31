@@ -1,0 +1,40 @@
+{
+  "scenes": [
+    {
+      "image": "sample_assets/002_atlantis_sahara_1.jpg",
+      "text": "Điều gì sẽ xảy ra nếu tôi nói với bạn: Thành phố thần thoại Atlantis không hề chìm dưới đáy biển... mà đang lộ thiên ngay giữa lòng sa mạc Sahara?",
+      "effect": "zoom_in_fast",
+      "prompt": "Cinematic wide view of the mysterious Sahara desert dunes with golden sand and dramatic sun, ancient mysterious atmosphere, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/002_atlantis_sahara_2.jpg",
+      "text": "Ẩn mình giữa Mauritania là Cấu trúc Richat, hay còn gọi là Mắt Sahara. Một cấu trúc vòng tròn đồng tâm khổng lồ đường kính bốn mươi kilomet, lớn đến mức chỉ có thể nhìn thấy trọn vẹn từ ngoài vũ trụ!",
+      "effect": "pan_down",
+      "prompt": "Satellite orbital NASA-style photography of the Richat Structure (Eye of the Sahara), giant concentric rings in the desert, blue and gold hues, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/002_atlantis_sahara_3.jpg",
+      "text": "Khoa học từng tuyên bố đây là miệng núi lửa hoặc tàn tích thiên thạch. Nhưng kỳ lạ thay: các nhà địa chất không hề tìm thấy bất kỳ mảnh vỡ vũ trụ hay dấu vết đá magma nào!",
+      "effect": "zoom_in_slow",
+      "prompt": "Geological expedition in rocky desert terrain, ancient sedimentary rock layers, barren wasteland, dramatic cinematic documentary lighting, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/002_atlantis_sahara_4.jpg",
+      "text": "Kinh ngạc hơn nữa, hơn hai nghìn bốn trăm năm trước, triết gia Plato từng miêu tả Atlantis gồm ba vòng nước và hai vòng đất đồng tâm, mở về hướng nam và được bao bọc bởi các dãy núi phía bắc – trùng khớp tuyệt đối với Mắt Sahara!",
+      "effect": "zoom_out",
+      "prompt": "Ancient Atlantis conceptual reconstruction matching Plato's description: concentric rings of land and water canals, majestic ancient citadel in the center, golden age civilization, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/002_atlantis_sahara_5.jpg",
+      "text": "Các bức ảnh vệ tinh hiện đại còn hé lộ dấu vết của những trận đại hồng thủy kinh hoàng từng quét sạch cả một vùng đất ra Đại Tây Dương, chôn vùi nền văn minh hoàng kim dưới lớp cát bụi nghìn năm!",
+      "effect": "zoom_in_slow",
+      "prompt": "Cataclysmic biblical flood wave crashing over ancient desert city, colossal tidal surge sweeping over dunes, dramatic apocalyptic lighting, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/002_atlantis_sahara_6.jpg",
+      "text": "Liệu đây chỉ là một sự trùng hợp đến rợn người... hay nhân loại thực sự đã tìm thấy thành phố đã mất của các vị thần? Hãy để lại suy nghĩ của bạn dưới phần bình luận!",
+      "effect": "zoom_in_fast",
+      "prompt": "Sunset over the vast mysterious Eye of the Sahara from high altitude, deep shadows, cinematic mystery documentary poster look, 9:16 aspect ratio"
+    }
+  ]
+}

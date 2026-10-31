@@ -1,0 +1,40 @@
+{
+  "scenes": [
+    {
+      "image": "sample_assets/006_gobekli_tepe_1.jpg",
+      "text": "Lịch sử sách giáo khoa dạy chúng ta rằng mười hai nghìn năm trước con người chỉ là người nguyên thủy... Vậy ai đã tạc nên công trình cự thạch vĩ đại này trước cả khi đồ gốm và nông nghiệp ra đời?",
+      "effect": "zoom_in_fast",
+      "prompt": "Close-up cinematic shot of gigantic prehistoric T-shaped stone pillar carved with 3D reliefs of lions and scorpions, mysterious ancient excavation site, dramatic golden hour, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/006_gobekli_tepe_2.jpg",
+      "text": "Đây là Göbekli Tepe tại Thổ Nhĩ Kỳ, công trình cự thạch được UNESCO công nhận là đền thờ cổ xưa nhất thế giới, có niên đại gần mười hai nghìn năm – cổ hơn Đại Kim Tự Tháp Ai Cập tới bảy nghìn năm!",
+      "effect": "pan_down",
+      "prompt": "Wide aerial drone view of the concentric circular megalithic stone enclosures of Gobekli Tepe on a barren hilltop, ancient archaeological excavation, cinematic documentary, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/006_gobekli_tepe_3.jpg",
+      "text": "Hàng chục vòng tròn đá với các cột cự thạch chữ T nặng từ mười đến năm mươi tấn được đẽo gọt tinh xảo. Các hình khắc nổi ba chiều hình báo hoa mai, linh cẩu và kền kền thể hiện trình độ nghệ thuật và thiên văn phi thường.",
+      "effect": "zoom_in_slow",
+      "prompt": "Detailed view of high-relief prehistoric stone carving on a T-pillar: a stalking predator animal, intricate ancient craftsmanship in limestone, warm cinematic side-lighting, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/006_gobekli_tepe_4.jpg",
+      "text": "Nhưng bí ẩn rùng mình nhất là: Nơi này không hề bị chiến tranh hay động đất phá hủy. Các nhà khảo cổ kinh ngạc phát hiện: Nó đã được con người CHỦ ĐỘNG CHÔN VÙI dưới hàng triệu tấn đất đá có chủ đích!",
+      "effect": "zoom_out",
+      "prompt": "Cinematic reconstruction of hundreds of ancient figures systematically burying the giant stone circle temple with baskets of soil and gravel, mysterious purposeful ritual, dramatic moody sky, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/006_gobekli_tepe_5.jpg",
+      "text": "Tại sao họ lại tốn hàng thế kỷ để dựng nên một thánh địa vĩ đại, rồi vội vã lấp kín nó như muốn phong ấn một bí mật đen tối, hoặc bảo vệ cỗ máy thời gian này cho thế hệ tương lai sau đại họa?",
+      "effect": "zoom_in_slow",
+      "prompt": "Cross-section showing the ancient megalithic temple safely preserved under an artificial mound of earth for 10,000 years, cosmic alignment with stellar constellations, cinematic visual, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/006_gobekli_tepe_6.jpg",
+      "text": "Họ xây dựng để tôn vinh điều gì, và chôn vùi nó để che giấu bí mật gì khỏi nhân loại? Hãy để lại phán đoán của bạn ngay dưới bình luận!",
+      "effect": "zoom_in_fast",
+      "prompt": "Mysterious solitary archaeologist standing in front of central twin T-pillars at twilight, celestial stars above, deep philosophical mystery atmosphere, 9:16 aspect ratio"
+    }
+  ]
+}

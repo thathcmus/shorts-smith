@@ -1,0 +1,40 @@
+{
+  "scenes": [
+    {
+      "image": "sample_assets/005_baalbek_1.jpg",
+      "text": "Điều gì sẽ xảy ra nếu tôi nói với bạn: Ngay cả những cỗ cần cẩu hiện đại mạnh nhất thế giới ngày nay... cũng hoàn toàn bất lực trước những tảng đá móng của ngôi đền này?",
+      "effect": "zoom_in_fast",
+      "prompt": "Cinematic majestic low angle shot of the colossal ancient stone ruins of Baalbek Lebanon, colossal monolithic stone pillars reaching into sunset sky, dramatic mystery atmosphere, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/005_baalbek_2.jpg",
+      "text": "Nằm tại Li-băng, quần thể đền Baalbek sở hữu những tảng đá cự thạch Trilithon nặng hơn tám trăm tấn. Đặc biệt tại mỏ đá gần đó, một khối đá nguyên khối nặng tới một nghìn năm trăm tấn đã được cắt gọt chuẩn xác hoàn hảo!",
+      "effect": "pan_down",
+      "prompt": "A tiny human explorer standing on top of the gigantic 'Stone of the Pregnant Woman' at Baalbek quarry, massive carved monolithic limestone block weighing 1500 tons, cinematic scale comparison, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/005_baalbek_3.jpg",
+      "text": "Để bạn dễ hình dung: một nghìn năm trăm tấn nặng hơn cả một tòa chung cư năm tầng! Cần cẩu di động lớn nhất của loài người hiện nay chỉ nâng được một nghìn hai trăm tấn, và phải mất nhiều ngày lắp đặt cố định.",
+      "effect": "zoom_in_slow",
+      "prompt": "Visual split scale diagram concept: modern giant heavy-lift industrial crane versus the ancient 1500-ton Baalbek stone megalith, photorealistic technical documentary style, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/005_baalbek_4.jpg",
+      "text": "Vậy mà hàng nghìn năm trước, tổ tiên chúng ta bằng cách nào đó đã nâng những khối đá này lên cao bảy mét, vận chuyển qua địa hình đồi dốc và ghép chúng khít nhau đến mức không thể lách vừa một lưỡi dao cạo?",
+      "effect": "zoom_out",
+      "prompt": "Ancient colossal temple foundation wall with massive three Trilithon stones seamlessly fitted without mortar, colossal precision ancient engineering, golden sunset light, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/005_baalbek_5.jpg",
+      "text": "Các nhà nghiên cứu khẳng định lớp móng cự thạch này đã tồn tại từ trước thời La Mã hàng nghìn năm. Nhiều giả thuyết chấn động cho rằng người cổ đại từng sở hữu công nghệ âm thanh cộng hưởng để làm mất trọng lượng của đá!",
+      "effect": "zoom_in_slow",
+      "prompt": "Mystical depiction of ancient builders using acoustic levitation or sound resonance frequencies to lift massive megalithic stones, glowing sound wave harmonics, cinematic ancient sci-fi realism, 9:16 aspect ratio"
+    },
+    {
+      "image": "sample_assets/005_baalbek_6.jpg",
+      "text": "Bạn tin đây là kỳ tích bằng sức người... hay bằng chứng về một nền văn minh đã sở hữu công nghệ vượt xa chúng ta? Hãy chia sẻ quan điểm của bạn dưới phần bình luận!",
+      "effect": "zoom_in_fast",
+      "prompt": "Dramatic silhouette of Baalbek temple ruins against starry cosmic milky way galaxy night sky, glowing ancient mystery, 9:16 aspect ratio"
+    }
+  ]
+}

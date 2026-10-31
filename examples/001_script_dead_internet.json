@@ -1,0 +1,40 @@
+{
+  "scenes": [
+    {
+      "image": "sample_assets/001_dead_internet_1.jpg",
+      "text": "Bạn có dám chắc người vừa bình luận video này... thực sự là một con người bằng xương bằng thịt?",
+      "effect": "zoom_in_fast",
+      "prompt": "Cinematic close-up of human eyes reflecting glowing green digital matrix code from a smartphone screen, dark moody room, cyber thriller, 8k"
+    },
+    {
+      "image": "sample_assets/001_dead_internet_2.jpg",
+      "text": "Theo các báo cáo an ninh mạng, hơn sáu mươi lăm phần trăm lưu lượng truy cập toàn cầu hiện nay không còn do con người tạo ra, mà là hàng tỷ tài khoản bot AI đang tự tương tác với nhau!",
+      "effect": "pan_down",
+      "prompt": "Endless high-tech server room with glowing blue and red server racks, fiber optic cables pulsing with data streams, dark futuristic cyberspace, 8k"
+    },
+    {
+      "image": "sample_assets/001_dead_internet_3.jpg",
+      "text": "Những tài khoản triệu người theo dõi, những cuộc cãi vã nảy lửa trên mạng... thực chất chỉ là một sân khấu kịch giả lập, nơi các thuật toán tự biên tự diễn để thao túng cảm xúc của bạn!",
+      "effect": "zoom_in_slow",
+      "prompt": "Solitary human silhouette sitting in a chair looking at a glowing phone, surrounded by ghostly digital bot avatars whispering, eerie dystopian atmosphere, 8k"
+    },
+    {
+      "image": "sample_assets/001_dead_internet_4.jpg",
+      "text": "Thuyết Internet Đã Chết khẳng định: Mạng xã hội của con người đã kết thúc từ nhiều năm trước. Chúng ta chỉ là những khán giả cô độc trong một nhà tù số do các tập đoàn công nghệ dựng nên!",
+      "effect": "zoom_out",
+      "prompt": "A gigantic digital simulation cage encapsulating a neon futuristic metropolis, holographic glitch in the dark sky, cyberpunk dystopia, dramatic lighting, 8k"
+    },
+    {
+      "image": "sample_assets/001_dead_internet_5.jpg",
+      "text": "Thậm chí rợn người hơn: Ngay cả việc video này xuất hiện trên màn hình của bạn vào đúng thời điểm này... cũng đã được một siêu trí tuệ AI tính toán chuẩn xác đến từng mili giây!",
+      "effect": "zoom_in_slow",
+      "prompt": "Glowing futuristic cybernetic hourglass floating in space, digital binary numbers falling like sand, hyper-detailed sci-fi concept art, dramatic volumetric light"
+    },
+    {
+      "image": "sample_assets/001_dead_internet_6.jpg",
+      "text": "Nếu bạn thực sự là CON NGƯỜI, hãy bình luận một từ 'TÔI' ngay bây giờ để chứng minh bạn không phải một dòng mã giả lập!",
+      "effect": "zoom_in_fast",
+      "prompt": "Glowing neon biometric fingerprint scan with glitch HUD interface saying 'HUMAN VERIFICATION REQUIRED', dark moody sci-fi thriller, intense cinematic visual"
+    }
+  ]
+}

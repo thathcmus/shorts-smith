@@ -6,7 +6,7 @@ import os
 import re
 import subprocess
 import edge_tts
-from engine.config import FFMPEG_EXE, DEFAULT_VOICE, TEMP_DIR
+from engine.config import FFMPEG_EXE, DEFAULT_VOICE, DEFAULT_SPEECH_RATE, TEMP_DIR
 
 def get_audio_duration(audio_path: str) -> float:
     """Đo thời lượng chính xác của tệp âm thanh qua ffmpeg."""
@@ -22,15 +22,16 @@ async def synthesize_speech_with_words(
     text: str,
     output_audio: str,
     voice: str = DEFAULT_VOICE,
-    rate: str = "-1%",
-    volume: str = "+0%"
+    rate: str = DEFAULT_SPEECH_RATE,
+    volume: str = "+0%",
+    pitch: str = "+0Hz"
 ) -> tuple[float, list]:
     """
     Chuyển văn bản thành giọng nói MP3 qua Edge-TTS và ghi nhận timestamp của từng từ (WordBoundary).
     Trả về: (thời lượng_giây, danh_sách_từ_kèm_timestamp)
     """
     os.makedirs(os.path.dirname(os.path.abspath(output_audio)), exist_ok=True)
-    comm = edge_tts.Communicate(text, voice, rate=rate, volume=volume, boundary="WordBoundary")
+    comm = edge_tts.Communicate(text, voice, rate=rate, volume=volume, pitch=pitch, boundary="WordBoundary")
     
     words = []
     with open(output_audio, "wb") as f:

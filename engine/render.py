@@ -50,6 +50,9 @@ def render_scene_clip(
     """
     os.makedirs(os.path.dirname(os.path.abspath(output_clip_path)), exist_ok=True)
 
+    if not os.path.exists(media_path):
+        raise FileNotFoundError(f"Không tìm thấy file hình ảnh/video tài nguyên: '{media_path}'")
+
     if is_video_file(media_path):
         # Nguồn là Video footage chuyển động thật
         vf = get_cinematic_video_filter(duration, fps=fps, width=width, height=height)
@@ -86,7 +89,11 @@ def render_scene_clip(
             output_clip_path
         ]
 
-    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    except subprocess.CalledProcessError as e:
+        err_msg = e.stderr.strip() if e.stderr else f"Mã lỗi {e.returncode}"
+        raise RuntimeError(f"FFmpeg render thất bại khi xử lý '{media_path}':\n{err_msg}")
     return output_clip_path
 
 def assemble_final_video(
