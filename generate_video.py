@@ -168,9 +168,58 @@ async def run_pipeline(
     print("=================================================================")
     return output_video_path
 
+def create_placeholder_frame(
+    output_path: str,
+    scene_idx: int,
+    total_scenes: int,
+    title: str,
+    prompt: str = "",
+    width: int = 1080,
+    height: int = 1920
+):
+    """Tự động sinh ảnh giữ chỗ 9:16 điện ảnh (placeholder) khi chưa có ảnh thật."""
+    from PIL import Image, ImageDraw
+    os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+
+    img = Image.new("RGB", (width, height), color=(15, 23, 42))  # Deep slate navy
+    draw = ImageDraw.Draw(img)
+
+    # Viền Neon công nghệ
+    draw.rectangle([40, 40, width - 40, height - 40], outline=(0, 229, 255), width=4)
+
+    # Thẻ Badge cảnh
+    badge_text = f"CẢNH {scene_idx}/{total_scenes} (ẢNH GIỮ CHỖ TẠM THỜI)"
+    draw.text((width // 2, 550), badge_text, fill=(255, 230, 0), anchor="mm")
+
+    # Tóm tắt câu thoại cảnh
+    clean_title = title if len(title) <= 120 else title[:120] + "..."
+    words = clean_title.split()
+    lines = []
+    cur_line = []
+    for w in words:
+        cur_line.append(w)
+        if len(" ".join(cur_line)) > 26:
+            lines.append(" ".join(cur_line))
+            cur_line = []
+    if cur_line:
+        lines.append(" ".join(cur_line))
+
+    y = 700
+    for l in lines[:5]:
+        draw.text((width // 2, y), l, fill=(255, 255, 255), anchor="mm")
+        y += 55
+
+    # Nhắc nhở prompt tạo ảnh thật
+    if prompt:
+        hint_clean = prompt if len(prompt) < 140 else prompt[:140] + "..."
+        draw.text((width // 2, 1200), "PROMPT TẠO ẢNH:", fill=(0, 229, 255), anchor="mm")
+        draw.text((width // 2, 1260), hint_clean, fill=(148, 163, 184), anchor="mm")
+
+    img.save(output_path, quality=90)
+
 def main():
     parser = argparse.ArgumentParser(description="AI Video Producer V2 CLI")
-    parser.add_argument("--script", "-s", type=str, help="Index số (ví dụ: 001, 3, 4...), từ khóa slug hoặc đường dẫn tệp JSON kịch bản")
+    parser.add_argument("--script", "-s", "--s", type=str, help="Index số (ví dụ: 001, 3, 4...), từ khóa slug hoặc đường dẫn tệp JSON kịch bản")
     parser.add_argument("--voice", "-v", type=str, default=DEFAULT_VOICE, help="Tên giọng đọc Edge-TTS (vi_nam, vi_nu, vi-VN-HoaiMyNeural...)")
     parser.add_argument("--rate", "-r", type=str, default=DEFAULT_SPEECH_RATE, help="Tốc độ giọng đọc (+50%% tương đương 1.5x, ví dụ: +0%%, +25%%, +50%%)")
     parser.add_argument("--pitch", "-p", type=str, default=DEFAULT_PITCH, help="Cao độ giọng đọc (+0Hz, -6Hz trầm u tối, +5Hz thanh cao)")
@@ -178,6 +227,7 @@ def main():
     parser.add_argument("--output", "-o", type=str, default=None, help="Tên tệp xuất MP4")
     parser.add_argument("--aspect", "-a", type=str, default="vertical", choices=["vertical", "horizontal"], help="Tỉ lệ: vertical (9:16) hoặc horizontal (16:9)")
     parser.add_argument("--bgm-volume", type=float, default=0.22, help="Âm lượng nhạc nền (0.0 đến 1.0)")
+    parser.add_argument("--placeholder", action="store_true", help="Tự động tạo ảnh giữ chỗ (placeholder 1080x1920) nếu thiếu ảnh trong sample_assets để dựng thử video ngay")
     args = parser.parse_args()
 
     # Phân giải kịch bản theo index số (001, 3, 4...), slug hoặc đường dẫn file
@@ -193,6 +243,38 @@ def main():
 
     print(f"📖 Đang tải kịch bản: {script_file}")
     scenes = load_script_from_file(script_file)
+
+    # PRE-FLIGHT CHECK: Kiểm tra sự tồn tại của hình ảnh trong sample_assets/
+    width, height = RESOLUTIONS.get(args.aspect, RESOLUTIONS["vertical"])
+    missing_assets = []
+    for idx, sc in enumerate(scenes):
+        m_path = sc.get("media") or sc.get("image") or sc.get("video")
+        if not m_path or not os.path.exists(m_path):
+            missing_assets.append((idx + 1, m_path, sc.get("text", ""), sc.get("prompt", "")))
+
+    if missing_assets:
+        if args.placeholder:
+            print(f"\n🎨 Phát hiện {len(missing_assets)} cảnh chưa có ảnh. Đang tự động tạo ảnh giữ chỗ tạm thời (--placeholder)...")
+            for sc_num, m_path, txt, prm in missing_assets:
+                print(f"   + Đã tạo ảnh tạm: {m_path}")
+                create_placeholder_frame(m_path, sc_num, len(scenes), txt, prm, width=width, height=height)
+        else:
+            print("\n" + "=" * 65)
+            print("❌ LỖI: CHƯA CÓ ĐỦ HÌNH ẢNH TRONG THƯ MỤC 'sample_assets/'")
+            print("=" * 65)
+            print(f"Kịch bản '{os.path.basename(script_file)}' yêu cầu {len(scenes)} ảnh, nhưng hiện còn thiếu {len(missing_assets)} file:")
+            for sc_num, m_path, txt, prm in missing_assets:
+                print(f"  ❌ Cảnh {sc_num}: {m_path}")
+                if prm:
+                    print(f"     👉 Prompt tạo ảnh: \"{prm[:75]}...\"")
+            print("\n💡 HƯỚNG DẪN KHẮC PHỤC:")
+            print("  Cách 1 (Dựng video hoàn chỉnh):")
+            print("     Lấy các prompt trên tạo ảnh AI 9:16 rồi lưu vào đúng tên file trong 'sample_assets/'.")
+            print("  Cách 2 (Dựng thử preview ngay với ảnh giữ chỗ):")
+            print(f"     Chạy thêm cờ --placeholder:")
+            print(f"     👉 python generate_video.py -s {args.script} --placeholder")
+            print("=" * 65 + "\n")
+            sys.exit(1)
 
     # Tự động suy luận tên tệp video xuất ra nếu chưa chỉ định --output
     output_filename = args.output

@@ -11,7 +11,7 @@
 | :---: | :--- | :--- | :---: | :---: | :--- |
 | `001` | `dead_internet` | Thuyết Internet Đã Chết | Đã làm | 🟢 ĐÃ ĐĂNG | [001_script_dead_internet.json](file:///e:/7_Media/examples/001_script_dead_internet.json) |
 | `002` | `mat_sahara_atlantis` | Cấu trúc Richat - Atlantis | Đã làm | 🟢 ĐÃ ĐĂNG | [002_script_mat_sahara_atlantis.json](file:///e:/7_Media/examples/002_script_mat_sahara_atlantis.json) |
-| `003` | `gunung_padang_pyramid` | Kim Tự Tháp 25.000 năm Đông Nam Á | **Ngày 1** | 📝 DRAFT | [003_script_gunung_padang.json](file:///e:/7_Media/examples/003_script_gunung_padang.json) |
+| `003` | `gunung_padang_pyramid` | Kim Tự Tháp 25.000 năm Đông Nam Á | **Ngày 1** | 🟡 SẴN SÀNG | [003_script_gunung_padang.json](file:///e:/7_Media/examples/003_script_gunung_padang.json) |
 | `004` | `derinkuyu_underground` | Thành phố ngầm 18 tầng Cappadocia | **Ngày 1** | 📝 DRAFT | [004_script_derinkuyu.json](file:///e:/7_Media/examples/004_script_derinkuyu.json) |
 | `005` | `baalbek_megaliths` | Cự thạch 1.500 tấn đền Baalbek | **Ngày 2** | 📝 DRAFT | [005_script_baalbek.json](file:///e:/7_Media/examples/005_script_baalbek.json) |
 | `006` | `gobekli_tepe` | Thánh địa 12.000 năm bị chôn vùi | **Ngày 2** | 📝 DRAFT | [006_script_gobekli_tepe.json](file:///e:/7_Media/examples/006_script_gobekli_tepe.json) |

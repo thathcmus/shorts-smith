@@ -276,40 +276,57 @@ def design_cover_for_video_id(
     vids = glob.glob(os.path.join(target_pkg, "*.mp4"))
     video_source = vids[0] if vids else None
 
-    # Tự động tìm ảnh gốc sạch (để không bị dính chữ phụ đề video cũ)
+    # Tự động tìm ảnh gốc sạch (để không bao giờ bị dính chữ phụ đề / câu thoại nung trên video)
     clean_bg = None
-    script_candidates = [
-        os.path.join(BASE_DIR, "examples", f"script_{slug}.json"),
-        os.path.join(BASE_DIR, f"script_{slug}.json")
-    ]
-    for sc in script_candidates:
-        if os.path.exists(sc):
-            try:
-                with open(sc, "r", encoding="utf-8") as f:
-                    sdata = json.load(f)
-                scenes = sdata.get("scenes", [])
-                if scenes and scenes[0].get("image"):
-                    first_img = os.path.join(BASE_DIR, scenes[0]["image"])
-                    if os.path.exists(first_img):
-                        clean_bg = first_img
-                        break
-            except Exception:
-                pass
 
+    # Cách 1: Tìm qua kịch bản JSON (bằng find_script_by_index_or_path hoặc quét thư mục examples/)
+    from engine.script_generator import find_script_by_index_or_path
+    sc_file = None
+    for target in [seq, slug, f"{seq}_{slug}"]:
+        try:
+            sc_file = find_script_by_index_or_path(target)
+            if sc_file and os.path.exists(sc_file):
+                break
+        except Exception:
+            pass
+
+    if sc_file and os.path.exists(sc_file):
+        try:
+            with open(sc_file, "r", encoding="utf-8") as f:
+                sdata = json.load(f)
+            scenes = sdata.get("scenes", [])
+            for sc in scenes:
+                img_cand = sc.get("image") or sc.get("media")
+                if img_cand:
+                    full_p = os.path.join(BASE_DIR, img_cand) if not os.path.isabs(img_cand) else img_cand
+                    if os.path.exists(full_p):
+                        clean_bg = full_p
+                        break
+        except Exception:
+            pass
+
+    # Cách 2: Tìm trực tiếp trong sample_assets/
     if not clean_bg:
-        asset_candidates = [
-            os.path.join(BASE_DIR, "sample_assets", f"{slug}_1.jpg"),
-            os.path.join(BASE_DIR, "sample_assets", f"{slug}.jpg"),
-            os.path.join(BASE_DIR, "sample_assets", f"{slug}_1.png"),
+        asset_patterns = [
+            f"{seq}_{slug}_1.jpg",
+            f"{seq}_{slug}.jpg",
+            f"{seq}_*1.jpg",
+            f"{slug}_1.jpg",
+            f"{slug}.jpg",
+            f"*{slug}*1.jpg",
+            f"*{slug}*.jpg",
         ]
-        for ac in asset_candidates:
-            if os.path.exists(ac):
-                clean_bg = ac
+        for pat in asset_patterns:
+            matches = glob.glob(os.path.join(BASE_DIR, "sample_assets", pat))
+            if matches:
+                clean_bg = matches[0]
                 break
 
     bg_source = clean_bg if clean_bg else video_source
     if clean_bg:
-        print(f"🌟 Sử dụng ảnh gốc sạch không dính phụ đề: {os.path.basename(clean_bg)}")
+        print(f"🌟 Sử dụng ảnh gốc sạch KHÔNG dính phụ đề/thoại: {os.path.basename(clean_bg)}")
+    else:
+        print(f"⚠️ Cảnh báo: Không tìm thấy ảnh gốc sạch, buộc phải trích xuất từ video (có thể dính phụ đề)")
 
     # Tên file ảnh bìa chuẩn
     cover_filename = f"{seq}_cover_{slug}.jpg"

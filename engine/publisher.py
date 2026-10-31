@@ -158,8 +158,33 @@ def create_publish_workspace(
     # Trích xuất Thumbnail ảnh bìa vào output/covers/ và đồng bộ vào publish_packages/
     top_cover_path = os.path.join(COVERS_DIR, thumb_filename)
     pkg_thumb_path = os.path.join(pkg_dir, thumb_filename)
-    extract_thumbnail_from_video(video_path, top_cover_path, timestamp_sec=2.5)
-    shutil.copy2(top_cover_path, pkg_thumb_path)
+
+    # Ưu tiên lấy ảnh gốc sạch từ cảnh đầu tiên (để KHÔNG BAO GIỜ bị dính chữ phụ đề nung trên video)
+    clean_scene_img = None
+    if scenes:
+        for sc in scenes:
+            cand = sc.get("image") or sc.get("media")
+            if cand:
+                full_p = os.path.join(BASE_DIR, cand) if not os.path.isabs(cand) else cand
+                if os.path.exists(full_p) and not full_p.lower().endswith((".mp4", ".mov", ".mkv", ".avi")):
+                    clean_scene_img = full_p
+                    break
+
+    if clean_scene_img:
+        # Dùng ảnh gốc sạch làm nền cho ảnh bìa
+        from engine.cover_designer import create_tiktok_cover
+        create_tiktok_cover(
+            background_source=clean_scene_img,
+            title=clean_slug.upper().replace("_", " "),
+            subtitle=None,
+            badge_text="BÍ ẨN",
+            output_path=top_cover_path
+        )
+    else:
+        extract_thumbnail_from_video(video_path, top_cover_path, timestamp_sec=0.1)
+
+    if os.path.exists(top_cover_path):
+        shutil.copy2(top_cover_path, pkg_thumb_path)
 
     # Đồng bộ file video trong thư mục package
     pkg_video_path = os.path.join(pkg_dir, video_filename)
