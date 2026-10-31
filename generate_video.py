@@ -144,32 +144,32 @@ def main():
         # Kịch bản mặc định thử nghiệm mẫu
         scenes = [
             {
-                "image": "dram1.jpg",
+                "image": os.path.join("sample_assets", "dram1.jpg") if os.path.exists(os.path.join("sample_assets", "dram1.jpg")) else "dram1.jpg",
                 "text": "Những gì sách giáo khoa dạy bạn về Kim Tự Tháp... có thể là một lời nói dối hoàn hảo!",
                 "effect": "zoom_in_fast"
             },
             {
-                "image": "dram2.jpg",
+                "image": os.path.join("sample_assets", "dram2.jpg") if os.path.exists(os.path.join("sample_assets", "dram2.jpg")) else "dram2.jpg",
                 "text": "Hai phẩy ba triệu khối cự thạch, nặng từ hai đến tám mươi tấn mỗi khối. Người cổ đại chỉ dùng búa đồng và dây thừng để vận chuyển qua hàng trăm cây số? Điều đó là hoàn toàn bất khả thi!",
                 "effect": "pan_down"
             },
             {
-                "image": "dram3.jpg",
+                "image": os.path.join("sample_assets", "dram3.jpg") if os.path.exists(os.path.join("sample_assets", "dram3.jpg")) else "dram3.jpg",
                 "text": "Kỳ lạ hơn nữa, bên trong Đại Kim Tự Tháp Giza chưa từng tìm thấy bất kỳ xác ướp pharaoh nào, cũng không hề có một dòng chữ tượng hình hay lời ca tụng lăng mộ!",
                 "effect": "zoom_in_slow"
             },
             {
-                "image": "dram4.jpg",
+                "image": os.path.join("sample_assets", "dram4.jpg") if os.path.exists(os.path.join("sample_assets", "dram4.jpg")) else "dram4.jpg",
                 "text": "Nhiều nhà khoa học hiện đại tin rằng: Cấu trúc đá granit chứa tinh thể thạch anh này thực chất là một trạm phát điện từ trường khổng lồ của một nền văn minh tiền sử đã biến mất!",
                 "effect": "zoom_out"
             },
             {
-                "image": "dram5.jpg",
+                "image": os.path.join("sample_assets", "dram5.jpg") if os.path.exists(os.path.join("sample_assets", "dram5.jpg")) else "dram5.jpg",
                 "text": "Kinh ngạc nhất, tọa độ địa lý chính xác của Kim Tự Tháp trùng khớp hoàn toàn với vận tốc ánh sáng: hai trăm chín mươi chín triệu bảy trăm chín mươi hai nghìn mét trên giây!",
                 "effect": "zoom_in_slow"
             },
             {
-                "image": "dram6.jpg",
+                "image": os.path.join("sample_assets", "dram6.jpg") if os.path.exists(os.path.join("sample_assets", "dram6.jpg")) else "dram6.jpg",
                 "text": "Nếu không phải con người thời đồ đồng xây dựng... thì thực sự ai mới là kẻ đã tạo ra chúng? Hãy để lại suy nghĩ của bạn!",
                 "effect": "zoom_in_fast"
             }
