@@ -3,11 +3,11 @@ name: ai-video-producer
 description: >-
   Tự động sản xuất video AI ngắn (Shorts / TikTok / Reels) chất lượng cao tại thư mục 7_Media.
   Tự động viết kịch bản giật gân theo công thức giữ chân người xem, tạo giọng đọc lồng tiếng
-  truyền cảm qua Edge-TTS, áp dụng hiệu ứng chuyển động camera điện ảnh Ken Burns qua FFmpeg,
-  hòa âm nhạc nền Tension và nung phụ đề vàng hổ phách nổi bật.
+  truyền cảm qua Edge-TTS, áp dụng hiệu ứng chuyển động camera điện ảnh Ken Burns, Color Grading
+  và Vignette qua FFmpeg, hòa âm nhạc nền MP3 điện ảnh thật và nung phụ đề động TikTok Karaoke.
 ---
 
-# Kỹ năng Sản Xuất Video AI (AI Video Producer Skill)
+# Kỹ năng Sản Xuất Video AI (AI Video Producer Skill V2)
 
 Skill này cung cấp quy trình khép kín giúp AI Agent và lập trình viên tạo ra các video ngắn đạt chuẩn điện ảnh và mức độ tương tác cao (Viral Shorts/Reels/TikTok) ngay trong thư mục `7_Media`.
 
@@ -38,43 +38,26 @@ Khi người dùng yêu cầu: *"Làm video về [Chủ đề]"*, hãy xây dự
 
 ---
 
-## 2. Quy trình thực hiện tự động
+## 2. Các điểm nâng cấp chuẩn Viral của Engine V2
 
-### Bước A: Tạo kịch bản JSON
-Lưu kịch bản vào tệp JSON (ví dụ: `script_topic.json`):
-```json
-{
-  "scenes": [
-    {
-      "image": "scene1.jpg",
-      "text": "Câu thoại cảnh 1...",
-      "effect": "zoom_in_fast"
-    },
-    ...
-  ]
-}
-```
-
-### Bước B: Chuẩn bị hình ảnh
-- Đảm bảo mỗi cảnh có 1 hình ảnh tương ứng (`scene1.jpg`, `scene2.jpg`, v.v.).
-- Nếu thiếu ảnh, có thể yêu cầu subagent `image-generator` vẽ ảnh điện ảnh chân thật theo prompt mô tả cảnh.
-
-### Bước C: Chạy lệnh sản xuất video
-Chạy CLI engine tích hợp:
-```bash
-python generate_video.py --script script_topic.json --output video_thanh_pham.mp4 --aspect vertical
-```
+1. **Phụ đề TikTok Karaoke Dynamic:**
+   - Sử dụng `boundary="WordBoundary"` từ Edge-TTS để bắt nhịp từng từ.
+   - Nhóm 2-4 từ ngắn, hiển thị ở 1/3 dưới màn hình (chuẩn tầm mắt).
+   - Từ đang phát âm sẽ **bật sáng màu vàng Neon (`&H0000E5FF&`)**, các từ còn lại giữ màu trắng tinh khiết trên nền viền đen đậm.
+2. **Nhạc nền điện ảnh thực thụ (Real Cinematic BGM):**
+   - Tích hợp kho nhạc MP3 kịch tính (`assets/audio/*.mp3`), tự động lặp (loop) và né âm (audio ducking) khi có giọng nói.
+3. **Hiệu ứng hình ảnh điện ảnh (Cinematic Look):**
+   - Kết hợp Ken Burns với **Color Grading** (tăng contrast + saturation) và **Vignette** (tối 4 góc viền màn hình) mang phong cách phim tài liệu Hollywood.
+   - Hỗ trợ cả **Video clip (.mp4)** và **Ảnh tĩnh (.jpg)**.
 
 ---
 
-## 3. Các tham số cấu hình nhanh
+## 3. Cách sử dụng
 
-* `--voice`:
-  - `vi-VN-NamMinhNeural` (Mặc định: Nam đanh thép, bí ẩn, tài liệu)
-  - `vi-VN-HoaiMyNeural` (Nữ truyền cảm, ấm áp)
-  - `en-US-ChristopherNeural` (Nam tiếng Anh tài liệu)
-  - `en-US-JennyNeural` (Nữ tiếng Anh tự nhiên)
-* `--aspect`:
-  - `vertical`: 1080x1920 (9:16 chuẩn TikTok / Shorts)
-  - `horizontal`: 1920x1080 (16:9 chuẩn YouTube)
-* `--bgm-volume`: Mặc định `0.22` (Audio ducking tự động để không lấn át giọng thuyết minh).
+```bash
+# Chạy với kịch bản mặc định và nhạc nền điện ảnh tự động
+python generate_video.py --output video_thanh_pham.mp4
+
+# Chọn giọng đọc và bài nhạc nền riêng
+python generate_video.py --voice vi-VN-NamMinhNeural --bgm assets/audio/output000.mp3 --output video_thanh_pham.mp4
+```

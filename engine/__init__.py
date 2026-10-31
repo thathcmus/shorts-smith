@@ -1,22 +1,28 @@
 """
-AI Video Producer Engine Package.
+AI Video Producer Engine Package (V2 Enhanced).
 """
 from engine.config import FFMPEG_EXE, RESOLUTIONS, VOICES
-from engine.tts import synthesize_speech, generate_ass_subtitles
-from engine.effects import get_ken_burns_filter
-from engine.render import render_scene_clip, create_tension_bgm, assemble_final_video
+from engine.tts import synthesize_speech_with_words, generate_tiktok_style_subtitles
+from engine.effects import (
+    get_cinematic_image_filter,
+    get_cinematic_video_filter,
+    is_video_file,
+)
+from engine.render import render_scene_clip, assemble_final_video, get_best_bgm_track
 from engine.script_generator import load_script_from_file, save_script_to_file
 
 __all__ = [
     "FFMPEG_EXE",
     "RESOLUTIONS",
     "VOICES",
-    "synthesize_speech",
-    "generate_ass_subtitles",
-    "get_ken_burns_filter",
+    "synthesize_speech_with_words",
+    "generate_tiktok_style_subtitles",
+    "get_cinematic_image_filter",
+    "get_cinematic_video_filter",
+    "is_video_file",
     "render_scene_clip",
-    "create_tension_bgm",
     "assemble_final_video",
+    "get_best_bgm_track",
     "load_script_from_file",
     "save_script_to_file",
 ]
