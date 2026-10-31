@@ -1,0 +1,87 @@
+# ==========================================
+# Python & Environment
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.env.*
+
+# ==========================================
+# Generated Media & Temp Files (Keep repo lightweight)
+# ==========================================
+# Audio & Video files
+*.mp4
+*.mkv
+*.mov
+*.avi
+*.webm
+*.flv
+*.ts
+*.mp3
+*.wav
+*.aac
+*.ogg
+*.flac
+*.m4a
+
+# Image files generated or downloaded
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.gif
+*.bmp
+
+# Subtitles & Temporary render artifacts
+*.ass
+*.srt
+*.vtt
+temp*
+*.tmp
+*.temp
+temp_*
+temp_concat*
+
+# Output & Render directories
+output/
+outputs/
+renders/
+exports/
+cache/
+
+# ==========================================
+# IDE & OS Specific
+# ==========================================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
