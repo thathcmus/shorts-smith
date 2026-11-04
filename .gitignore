@@ -85,3 +85,7 @@ cache/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Superpowers and Test caches
+.superpowers/
+.pytest_cache/
