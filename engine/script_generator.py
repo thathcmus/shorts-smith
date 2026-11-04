@@ -1,11 +1,15 @@
 """
-Module quản lý kịch bản: cấu trúc 6 cảnh chuẩn shorts viral (~60 giây).
-Hỗ trợ tìm kịch bản theo index (001, 3, 4...), theo slug hoặc theo đường dẫn file.
+Module quản lý và tự động sinh kịch bản: cấu trúc 6 cảnh chuẩn shorts viral (~40-60 giây).
+Hỗ trợ:
+- Tự động sinh kịch bản từ chủ đề bất kỳ (LLM đám mây miễn phí + Offline Fallback)
+- Tìm kịch bản theo index (001, 3, 4...), theo slug hoặc theo đường dẫn file.
 """
 import glob
 import json
 import os
 import re
+import urllib.parse
+import requests
 
 TEMPLATES = {
     "mystery": [
@@ -18,6 +22,93 @@ TEMPLATES = {
     ]
 }
 
+def get_fallback_script(topic: str, style: str = "mystery") -> dict:
+    """
+    Tạo kịch bản dự phòng 6 cảnh chuẩn tâm lý giật gân khi không có kết nối mạng.
+    Bao gồm câu thoại tiếng Việt truyền cảm và visual prompt tiếng Anh chuẩn điện ảnh 8k.
+    """
+    clean_topic = topic.strip()
+    return {
+        "title": clean_topic,
+        "scenes": [
+            {
+                "role": "hook",
+                "text": f"Bạn có tin rằng bí mật lớn nhất về {clean_topic}... thực chất đã bị che giấu suốt hàng nghìn năm?",
+                "effect": "zoom_in_fast",
+                "prompt": f"Cinematic dramatic close-up revealing ancient mysterious artifact representing {clean_topic}, eerie volumetric lighting, dark moody atmosphere, 8k"
+            },
+            {
+                "role": "fact1",
+                "text": f"Các nhà nghiên cứu phát hiện cấu trúc phi thường của {clean_topic} vượt xa mọi quy chuẩn kỹ thuật của thời đại đó!",
+                "effect": "pan_down",
+                "prompt": f"Panoramic cinematic establishing shot of monumental ancient ruins of {clean_topic}, epic scale, mystical morning fog, 8k"
+            },
+            {
+                "role": "anomaly",
+                "text": "Điểm kỳ lạ nhất là: không hề có bất kỳ dấu vết công cụ hay tài liệu nào ghi chép lại cách nó được tạo ra.",
+                "effect": "zoom_in_slow",
+                "prompt": f"Intricate high-detail carvings and anomalous monolithic architecture of {clean_topic}, mysterious glowing symbols, dramatic cinematic shadows, 8k"
+            },
+            {
+                "role": "theory",
+                "text": f"Nhiều giả thuyết chấn động cho rằng {clean_topic} là di sản của một nền văn minh tiền sử sở hữu công nghệ đã bị lãng quên.",
+                "effect": "zoom_out",
+                "prompt": f"Breathtaking wide view of advanced ancient civilization around {clean_topic}, futuristic architectural elements, golden hour cinematic lighting, 8k"
+            },
+            {
+                "role": "coincidence",
+                "text": "Thậm chí kinh ngạc hơn: vị trí tọa độ của nó lại thẳng hàng hoàn hảo với các chòm sao trên bầu trời vũ trụ!",
+                "effect": "zoom_in_slow",
+                "prompt": f"Ancient astronomical alignment of {clean_topic} pointing directly toward the glowing Milky Way galaxy, cosmic dramatic night sky, 8k"
+            },
+            {
+                "role": "cta",
+                "text": f"Theo bạn, {clean_topic} là sự trùng hợp hay bằng chứng có thật? Hãy để lại bình luận góc nhìn của bạn ngay!",
+                "effect": "zoom_in_fast",
+                "prompt": f"Mysterious glowing ancient portal eye carved in stone representing the legacy of {clean_topic}, hyper-detailed cinematic concept art, 8k"
+            }
+        ]
+    }
+
+def generate_script_from_topic(topic: str, style: str = "mystery") -> dict:
+    """
+    Tự động sinh kịch bản 6 cảnh từ chủ đề gợi ý qua dịch vụ AI văn bản miễn phí.
+    Tự động chuyển sang chế độ fallback an toàn nếu gặp sự cố kết nối mạng.
+    """
+    clean_topic = topic.strip()
+    system_instruction = (
+        "Bạn là một biên kịch video ngắn TikTok/Shorts tài liệu bí ẩn triệu view. "
+        f"Hãy viết một kịch bản 6 phân cảnh bằng tiếng Việt về chủ đề: '{clean_topic}'. "
+        "Yêu cầu định dạng JSON CHÍNH XÁC có key 'scenes' chứa 6 object: "
+        "mỗi object có 'role' (hook, fact1, anomaly, theory, coincidence, cta), "
+        "'text' (câu thoại tiếng Việt dồn dập, giật gân, nhịp 1.5x), "
+        "'effect' (chọn một trong: zoom_in_fast, pan_down, zoom_in_slow, zoom_out), "
+        "'prompt' (mô tả visual prompt tiếng Anh cực kỳ chi tiết cho AI vẽ ảnh: Cinematic, 8k, dramatic lighting, vertical composition). "
+        "Chỉ trả về JSON thuần túy, không có giải thích thêm."
+    )
+    
+    encoded_prompt = urllib.parse.quote(system_instruction)
+    api_url = f"https://text.pollinations.ai/{encoded_prompt}?json=true&model=openai"
+
+    try:
+        resp = requests.get(api_url, timeout=12)
+        if resp.status_code == 200:
+            raw_text = resp.text.strip()
+            # Làm sạch markdown ```json nếu có
+            if "```" in raw_text:
+                m = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", raw_text)
+                if m:
+                    raw_text = m.group(1).strip()
+            
+            data = json.loads(raw_text)
+            if isinstance(data, dict) and "scenes" in data and len(data["scenes"]) == 6:
+                return data
+    except Exception:
+        pass
+
+    # Nếu không kết nối được hoặc JSON lỗi, dùng bộ fallback thông minh
+    return get_fallback_script(clean_topic, style=style)
+
 def load_script_from_file(json_path: str) -> list:
     """Tải kịch bản từ tệp JSON."""
     with open(json_path, "r", encoding="utf-8") as f:
@@ -28,6 +119,7 @@ def load_script_from_file(json_path: str) -> list:
 
 def save_script_to_file(scenes: list, output_json: str):
     """Lưu kịch bản ra tệp JSON."""
+    os.makedirs(os.path.dirname(os.path.abspath(output_json)), exist_ok=True)
     with open(output_json, "w", encoding="utf-8") as f:
         json.dump({"scenes": scenes}, f, ensure_ascii=False, indent=2)
 
@@ -65,7 +157,6 @@ def find_script_by_index_or_path(script_target: str, examples_dir: str = "exampl
     num_match = re.match(r"^(\d{1,4})$", script_target.strip())
     if num_match:
         idx_num = int(num_match.group(1))
-        # Tìm các file bắt đầu bằng số thứ tự này (ví dụ: 003_ hoặc 3_)
         for f in all_json_files:
             fname = os.path.basename(f)
             m = re.match(r"^(\d{1,4})_", fname)
@@ -83,7 +174,6 @@ def find_script_by_index_or_path(script_target: str, examples_dir: str = "exampl
     if matches:
         return matches[0]
 
-    # Nếu không tìm thấy, liệt kê các kịch bản có sẵn để gợi ý cho người dùng
     available = [os.path.basename(f) for f in all_json_files]
     avail_str = "\n".join([f"   - {item}" for item in available]) if available else "   (Chưa có kịch bản nào)"
     raise FileNotFoundError(
@@ -100,15 +190,12 @@ def derive_default_output_name(script_path: str) -> str:
     if not script_path:
         return None
     base = os.path.splitext(os.path.basename(script_path))[0]
-    # Mẫu 1: 003_script_gunung_padang -> 003_video_gunung_padang.mp4
     m = re.match(r"^(\d{2,4})_script_(.*)$", base)
     if m:
         return f"{m.group(1)}_video_{m.group(2)}.mp4"
-    # Mẫu 2: 003_gunung_padang -> 003_video_gunung_padang.mp4
     m = re.match(r"^(\d{2,4})_(.*)$", base)
     if m:
         clean = re.sub(r"^script_", "", m.group(2))
         return f"{m.group(1)}_video_{clean}.mp4"
-    # Mẫu 3: script_dead_internet -> video_dead_internet.mp4
     clean = re.sub(r"^script_", "", base)
     return f"video_{clean}.mp4"
