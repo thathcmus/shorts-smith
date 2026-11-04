@@ -90,7 +90,7 @@ async def test_fetch_image_rejects_corrupted_image(temp_test_dir):
 
     with patch("asyncio.sleep", new_callable=AsyncMock):
         with pytest.raises(RuntimeError, match="Failed to download valid image after retries"):
-            await fetch_image(prompt, output_file, max_retries=2, session=mock_session)
+            await fetch_image(prompt, output_file, max_retries=2, session=mock_session, allow_fallback=False)
 
 @pytest.mark.asyncio
 async def test_generate_images_parallel(temp_test_dir, sample_scene_payload, mock_image_bytes):
