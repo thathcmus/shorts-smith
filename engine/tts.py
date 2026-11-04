@@ -29,18 +29,35 @@ async def synthesize_speech_with_words(
 ) -> tuple[float, list]:
     """
     Chuyển văn bản thành giọng nói MP3 qua Edge-TTS và ghi nhận timestamp của từng từ (WordBoundary).
-    Có cơ chế tự động thử lại (retry) nếu gặp lỗi mạng hoặc ngắt kết nối đột xuất.
+    Có cơ chế tự động thử lại (retry) thông minh: nếu WordBoundary bị từ chối bởi máy chủ,
+    tự động chuyển sang luồng tổng hợp audio tiêu chuẩn và nội suy nhịp từ cho phụ đề Karaoke.
     Trả về: (thời lượng_giây, danh_sách_từ_kèm_timestamp)
     """
     os.makedirs(os.path.dirname(os.path.abspath(output_audio)), exist_ok=True)
     
-    # Làm sạch ký tự dấu chấm lửng tránh kẹt parser TTS
-    clean_text = text.replace("...", ". ").replace("..", ". ").strip()
+    # Làm sạch ký tự đặc biệt, dấu gạch nối và ngoặc kép lạ tránh kẹt parser TTS
+    clean_text = (
+        text.replace("...", ". ")
+        .replace("..", ". ")
+        .replace("–", "-")
+        .replace("—", "-")
+        .replace("“", '"')
+        .replace("”", '"')
+        .replace("‘", "'")
+        .replace("’", "'")
+        .strip()
+    )
     
     last_err = None
     for attempt in range(max_retries):
         try:
-            comm = edge_tts.Communicate(clean_text, voice, rate=rate, volume=volume, pitch=pitch, boundary="WordBoundary")
+            # Lần đầu thử với WordBoundary. Nếu máy chủ báo lỗi (NoAudioReceived), lần sau chuyển sang chế độ không boundary
+            use_wb = (attempt == 0)
+            if use_wb:
+                comm = edge_tts.Communicate(clean_text, voice, rate=rate, volume=volume, pitch=pitch, boundary="WordBoundary")
+            else:
+                comm = edge_tts.Communicate(clean_text, voice, rate=rate, volume=volume, pitch=pitch)
+
             words = []
             with open(output_audio, "wb") as f:
                 async for chunk in comm.stream():
@@ -55,6 +72,16 @@ async def synthesize_speech_with_words(
             
             if os.path.exists(output_audio) and os.path.getsize(output_audio) > 0:
                 dur = get_audio_duration(output_audio)
+                # Nếu không bắt được nhịp từ trực tiếp, tự động nội suy đều theo thời lượng để Karaoke vẫn nhảy đẹp
+                if not words:
+                    all_tokens = clean_text.split()
+                    if all_tokens:
+                        step = dur / len(all_tokens)
+                        words = [{
+                            "word": tok,
+                            "start": round(i * step, 2),
+                            "end": round((i + 1) * step, 2)
+                        } for i, tok in enumerate(all_tokens)]
                 return dur, words
             else:
                 raise RuntimeError("Audio file empty after TTS generation")
