@@ -245,7 +245,8 @@ def create_placeholder_frame(
 
     img.save(output_path, quality=90)
 
-def main():
+def build_arg_parser() -> argparse.ArgumentParser:
+    """Xây dựng bộ phân tích tham số dòng lệnh (CLI Argument Parser)."""
     parser = argparse.ArgumentParser(description="AI Video Producer V2.5 CLI")
     parser.add_argument("--script", "-s", "--s", type=str, help="Index số (ví dụ: 001, 3, 4...), từ khóa slug hoặc đường dẫn tệp JSON kịch bản")
     parser.add_argument("--topic", "-t", type=str, default=None, help="Chủ đề video tự động sinh kịch bản và ảnh AI trọn gói (ví dụ: 'Kim Tự Tháp Rừng Amazon')")
@@ -258,6 +259,10 @@ def main():
     parser.add_argument("--aspect", "-a", type=str, default="vertical", choices=["vertical", "horizontal"], help="Tỉ lệ: vertical (9:16) hoặc horizontal (16:9)")
     parser.add_argument("--bgm-volume", type=float, default=0.22, help="Âm lượng nhạc nền (0.0 đến 1.0)")
     parser.add_argument("--placeholder", action="store_true", help="Tự động tạo ảnh giữ chỗ (placeholder 1080x1920) nếu thiếu ảnh")
+    return parser
+
+def main():
+    parser = build_arg_parser()
     args = parser.parse_args()
 
     width, height = RESOLUTIONS.get(args.aspect, RESOLUTIONS["vertical"])

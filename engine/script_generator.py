@@ -75,7 +75,7 @@ def generate_script_from_topic(topic: str, style: str = "mystery") -> dict:
     Tự động sinh kịch bản 6 cảnh từ chủ đề gợi ý qua dịch vụ AI văn bản miễn phí.
     Tự động chuyển sang chế độ fallback an toàn nếu gặp sự cố kết nối mạng.
     """
-    clean_topic = topic.strip()
+    clean_topic = (topic or "").strip() or "Bí Ẩn Thế Giới"
     system_instruction = (
         "Bạn là một biên kịch video ngắn TikTok/Shorts tài liệu bí ẩn triệu view. "
         f"Hãy viết một kịch bản 6 phân cảnh bằng tiếng Việt về chủ đề: '{clean_topic}'. "
@@ -101,7 +101,12 @@ def generate_script_from_topic(topic: str, style: str = "mystery") -> dict:
                     raw_text = m.group(1).strip()
             
             data = json.loads(raw_text)
-            if isinstance(data, dict) and "scenes" in data and len(data["scenes"]) == 6:
+            if (
+                isinstance(data, dict)
+                and "scenes" in data
+                and len(data["scenes"]) == 6
+                and all(isinstance(s, dict) and s.get("text") and s.get("prompt") for s in data["scenes"])
+            ):
                 return data
     except Exception:
         pass

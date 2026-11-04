@@ -1,4 +1,5 @@
 import os
+import sys
 import pytest
 from unittest.mock import patch, AsyncMock, MagicMock
 
@@ -6,8 +7,8 @@ import generate_video
 from engine.script_generator import get_fallback_script
 
 def test_cli_parser_supports_topic_and_generate_images():
-    # Test argparse argument parsing without running main()
-    parser = argparse_test_helper()
+    """Kiểm tra trực tiếp ArgumentParser của production trong generate_video.py."""
+    parser = generate_video.build_arg_parser()
     args = parser.parse_args(["--topic", "Bi An Rung Amazon", "--generate-images"])
     assert args.topic == "Bi An Rung Amazon"
     assert args.generate_images is True
@@ -16,26 +17,58 @@ def test_cli_parser_supports_topic_and_generate_images():
     assert short_args.topic == "Thanh Pho Ngam"
     assert short_args.generate_images is True
 
-def argparse_test_helper():
-    import argparse
-    from engine.config import DEFAULT_VOICE, DEFAULT_SPEECH_RATE, DEFAULT_PITCH
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--script", "-s", "--s", type=str)
-    parser.add_argument("--topic", "-t", type=str, help="Chủ đề tự động")
-    parser.add_argument("--generate-images", "-g", action="store_true")
-    parser.add_argument("--voice", "-v", default=DEFAULT_VOICE)
-    parser.add_argument("--rate", "-r", default=DEFAULT_SPEECH_RATE)
-    parser.add_argument("--pitch", "-p", default=DEFAULT_PITCH)
-    parser.add_argument("--output", "-o", default=None)
-    parser.add_argument("--aspect", "-a", default="vertical")
-    parser.add_argument("--bgm", "-b", default=None)
-    parser.add_argument("--bgm-volume", type=float, default=0.22)
-    parser.add_argument("--placeholder", action="store_true")
-    return parser
+def test_pipeline_with_topic_triggers_script_and_image_generation(temp_test_dir):
+    """Kiểm tra luồng --topic kích hoạt đầy đủ sinh kịch bản, sinh ảnh và nạp vào pipeline."""
+    sample_topic = "Bí Ẩn Kim Tự Tháp Rừng Amazon"
+    mock_script = get_fallback_script(sample_topic)
+
+    mock_run_pipeline = AsyncMock(return_value=os.path.join(temp_test_dir, "001_video_test.mp4"))
+    mock_gen_images = AsyncMock(return_value=[f"img_{i}.jpg" for i in range(6)])
+
+    with patch.object(sys, "argv", ["generate_video.py", "--topic", sample_topic]), \
+         patch("generate_video.generate_script_from_topic", return_value=mock_script) as mock_script_fn, \
+         patch("generate_video.generate_images_parallel", mock_gen_images), \
+         patch("generate_video.run_pipeline", mock_run_pipeline), \
+         patch("generate_video.BASE_DIR", temp_test_dir), \
+         patch("generate_video.OUTPUT_DIR", temp_test_dir):
+
+        generate_video.main()
+
+        mock_script_fn.assert_called_once_with(sample_topic)
+        assert mock_gen_images.called
+        assert mock_run_pipeline.called
+
+def test_pipeline_with_existing_script_respects_existing_assets(temp_test_dir, sample_scene_payload):
+    """Kiểm tra kịch bản có sẵn đầy đủ ảnh thì không tải lại nếu không có cờ -g."""
+    fake_script = os.path.join(temp_test_dir, "001_script_test.json")
+    with open(fake_script, "w", encoding="utf-8") as f:
+        f.write("{}")
+
+    # Tạo các tệp ảnh giả lập hợp lệ (> 10KB)
+    for sc in sample_scene_payload:
+        fake_img = os.path.join(temp_test_dir, "existing_valid.jpg")
+        with open(fake_img, "wb") as f:
+            f.write(b"X" * 12000)
+        sc["image"] = fake_img
+
+    mock_run_pipeline = AsyncMock(return_value="done.mp4")
+    mock_gen_images = AsyncMock()
+
+    with patch.object(sys, "argv", ["generate_video.py", "-s", "001"]), \
+         patch("generate_video.find_script_by_index_or_path", return_value=fake_script), \
+         patch("generate_video.load_script_from_file", return_value=sample_scene_payload), \
+         patch("generate_video.validate_image_file", return_value=True), \
+         patch("generate_video.generate_images_parallel", mock_gen_images), \
+         patch("generate_video.run_pipeline", mock_run_pipeline):
+
+        generate_video.main()
+
+        # Không được gọi tải lại ảnh vì ảnh đã có sẵn và hợp lệ
+        mock_gen_images.assert_not_called()
+        assert mock_run_pipeline.called
 
 @pytest.mark.asyncio
 async def test_run_pipeline_end_to_end_cleans_temp_dir(temp_test_dir, sample_scene_payload):
-    # Mock TTS, render_scene_clip, assemble_final_video, and create_publish_workspace
     for sc in sample_scene_payload:
         fake_img = os.path.join(temp_test_dir, "fake_img.jpg")
         with open(fake_img, "wb") as f:

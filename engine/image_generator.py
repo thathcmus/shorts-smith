@@ -18,8 +18,8 @@ def validate_image_file(image_path: str) -> bool:
     """
     if not os.path.exists(image_path):
         return False
-    # Kích thước phải lớn hơn ít nhất 1KB
-    if os.path.getsize(image_path) < 1024:
+    # Kích thước phải lớn hơn ít nhất 10KB
+    if os.path.getsize(image_path) < 10240:
         return False
     try:
         with Image.open(image_path) as img:
@@ -66,6 +66,11 @@ async def fetch_image(
                         if validate_image_file(output_path):
                             return output_path
                         else:
+                            if os.path.exists(output_path):
+                                try:
+                                    os.remove(output_path)
+                                except Exception:
+                                    pass
                             last_error = ValueError("Tệp ảnh tải về bị hỏng hoặc định dạng không hợp lệ")
                     else:
                         last_error = RuntimeError(f"HTTP {resp.status} từ máy chủ sinh ảnh")

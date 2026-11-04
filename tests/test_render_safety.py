@@ -19,6 +19,11 @@ def test_sanitize_ffmpeg_path_windows_colons_and_spaces():
     safe_fwd = sanitize_ffmpeg_path(raw_path_fwd)
     assert safe_fwd == "E\\:/7_Media/temp_build/job_123/tiktok_karaoke.ass"
 
+    # Single quote escaping
+    raw_quote = r"C:\Users\John's Media\sub.ass"
+    safe_quote = sanitize_ffmpeg_path(raw_quote)
+    assert safe_quote == r"C\:/Users/John\'s Media/sub.ass"
+
 def test_assemble_final_video_captures_stderr_on_error(temp_test_dir):
     clip_paths = [os.path.join(temp_test_dir, "clip1.mp4")]
     out_video = os.path.join(temp_test_dir, "out.mp4")

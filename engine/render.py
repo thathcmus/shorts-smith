@@ -25,6 +25,7 @@ def sanitize_ffmpeg_path(path: str) -> str:
     Chuẩn hóa đường dẫn an toàn cho cú pháp bộ lọc (filter) của FFmpeg trên Windows:
     - Chuyển dấu phân cách ngược '\\' thành '/'
     - Escape dấu hai chấm ':' của ổ đĩa thành '\\:' để FFmpeg không hiểu nhầm là tham số filter.
+    - Escape dấu nháy đơn '\\'' thành '\\\'' để tránh ngắt chuỗi filter literal.
     """
     if not path:
         return ""
@@ -32,6 +33,8 @@ def sanitize_ffmpeg_path(path: str) -> str:
     norm = os.path.abspath(path).replace("\\", "/")
     # Escape dấu : chưa được escape
     sanitized = re.sub(r"(?<!\\):", r"\:", norm)
+    # Escape dấu nháy đơn
+    sanitized = sanitized.replace("'", r"\'")
     return sanitized
 
 def clean_temp_files(job_dir: str = None, root_dir: str = BASE_DIR):
@@ -153,7 +156,7 @@ def assemble_final_video(
     concat_list_file = os.path.join(temp_dir, "concat_manifest.txt")
     with open(concat_list_file, "w", encoding="utf-8") as f:
         for clip in clip_paths:
-            safe_path = os.path.abspath(clip).replace("\\", "/")
+            safe_path = os.path.abspath(clip).replace("\\", "/").replace("'", r"\'")
             f.write(f"file '{safe_path}'\n")
 
     # 2. Concat các clip video

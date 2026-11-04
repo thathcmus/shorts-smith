@@ -18,6 +18,12 @@ async def test_validate_image_file(temp_test_dir, mock_image_bytes):
         f.write(mock_image_bytes)
     assert validate_image_file(valid_path) is True
 
+    # Truncated or small non-image payload (e.g. 5KB)
+    small_path = os.path.join(temp_test_dir, "small_5kb.jpg")
+    with open(small_path, "wb") as f:
+        f.write(b"X" * 5000)
+    assert validate_image_file(small_path) is False
+
     corrupt_path = os.path.join(temp_test_dir, "corrupt.jpg")
     with open(corrupt_path, "wb") as f:
         f.write(b"NOT_AN_IMAGE_DATA_TOO_SMALL")
@@ -44,7 +50,7 @@ async def test_fetch_image_success(temp_test_dir, mock_image_bytes):
 
     assert result_path == output_file
     assert os.path.exists(output_file)
-    assert os.path.getsize(output_file) > 1024
+    assert os.path.getsize(output_file) >= 10240
     with Image.open(output_file) as img:
         assert img.size == (1080, 1920)
 
