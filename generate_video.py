@@ -138,6 +138,8 @@ async def run_pipeline(
                 "effect": scene.get("effect", "zoom_in_slow")
             })
             audio_paths.append(audio_file)
+            if idx < len(scenes) - 1:
+                await asyncio.sleep(1.0)
             print(f"     Thời lượng: {padded_dur:.2f}s | {len(words)} từ được bắt nhịp")
 
         total_duration = sum(s["duration"] for s in scenes_data)

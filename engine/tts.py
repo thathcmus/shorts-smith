@@ -6,7 +6,7 @@ import os
 import re
 import subprocess
 import edge_tts
-from engine.config import FFMPEG_EXE, DEFAULT_VOICE, DEFAULT_SPEECH_RATE, TEMP_DIR
+from engine.config import FFMPEG_EXE, VOICES, DEFAULT_VOICE, DEFAULT_SPEECH_RATE, TEMP_DIR
 
 def get_audio_duration(audio_path: str) -> float:
     """Đo thời lượng chính xác của tệp âm thanh qua ffmpeg."""
@@ -25,12 +25,15 @@ async def synthesize_speech_with_words(
     rate: str = DEFAULT_SPEECH_RATE,
     volume: str = "+0%",
     pitch: str = "+0Hz",
-    max_retries: int = 3
+    max_retries: int = 5
 ) -> tuple[float, list]:
     """
     Chuyển văn bản thành giọng nói MP3 qua Edge-TTS và ghi nhận timestamp của từng từ (WordBoundary).
-    Có cơ chế tự động thử lại (retry) thông minh: nếu WordBoundary bị từ chối bởi máy chủ,
-    tự động chuyển sang luồng tổng hợp audio tiêu chuẩn và nội suy nhịp từ cho phụ đề Karaoke.
+    Có cơ chế tự động thử lại (retry) thông minh đa tầng:
+    - Lần 0: Giọng chính kèm WordBoundary
+    - Lần 1: Giọng chính tiêu chuẩn (tự động nội suy nhịp từ)
+    - Lần 2: Giọng luân phiên (Fallback Voice) kèm WordBoundary
+    - Lần 3+: Giọng luân phiên tiêu chuẩn kèm nội suy nhịp từ
     Trả về: (thời lượng_giây, danh_sách_từ_kèm_timestamp)
     """
     os.makedirs(os.path.dirname(os.path.abspath(output_audio)), exist_ok=True)
@@ -48,15 +51,29 @@ async def synthesize_speech_with_words(
         .strip()
     )
     
+    alt_voice = VOICES.get("vi_nu", "vi-VN-HoaiMyNeural") if voice == VOICES.get("vi_nam", "vi-VN-NamMinhNeural") else VOICES.get("vi_nam", "vi-VN-NamMinhNeural")
     last_err = None
+
     for attempt in range(max_retries):
+        cur_voice = voice if attempt < 2 else alt_voice
+        use_wb = (attempt in (0, 2))
+        
         try:
-            # Lần đầu thử với WordBoundary. Nếu máy chủ báo lỗi (NoAudioReceived), lần sau chuyển sang chế độ không boundary
-            use_wb = (attempt == 0)
+            if os.path.exists(output_audio):
+                try:
+                    os.remove(output_audio)
+                except OSError:
+                    pass
+
+            kwargs = {
+                "rate": rate,
+                "volume": volume,
+                "pitch": pitch,
+            }
             if use_wb:
-                comm = edge_tts.Communicate(clean_text, voice, rate=rate, volume=volume, pitch=pitch, boundary="WordBoundary")
-            else:
-                comm = edge_tts.Communicate(clean_text, voice, rate=rate, volume=volume, pitch=pitch)
+                kwargs["boundary"] = "WordBoundary"
+
+            comm = edge_tts.Communicate(clean_text, cur_voice, **kwargs)
 
             words = []
             with open(output_audio, "wb") as f:
@@ -70,7 +87,7 @@ async def synthesize_speech_with_words(
                             "end": (chunk["offset"] + chunk["duration"]) / 10000000.0
                         })
             
-            if os.path.exists(output_audio) and os.path.getsize(output_audio) > 0:
+            if os.path.exists(output_audio) and os.path.getsize(output_audio) > 1024:
                 dur = get_audio_duration(output_audio)
                 # Nếu không bắt được nhịp từ trực tiếp, tự động nội suy đều theo thời lượng để Karaoke vẫn nhảy đẹp
                 if not words:
@@ -84,11 +101,12 @@ async def synthesize_speech_with_words(
                         } for i, tok in enumerate(all_tokens)]
                 return dur, words
             else:
-                raise RuntimeError("Audio file empty after TTS generation")
+                raise RuntimeError(f"Audio file empty or corrupted (<1KB): {output_audio}")
         except Exception as e:
             last_err = e
             if attempt < max_retries - 1:
-                await asyncio.sleep(1.0 * (attempt + 1))
+                backoff = 1.8 * (attempt + 1)
+                await asyncio.sleep(backoff)
             else:
                 raise last_err
 
