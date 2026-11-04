@@ -1,9 +1,11 @@
 """
-Bộ dựng video (Video Renderer) nâng cấp: hỗ trợ cả Video Footage thật, BGM MP3 điện ảnh và phụ đề TikTok.
+Bộ dựng video (Video Renderer) nâng cấp: hỗ trợ cả Video Footage thật, BGM MP3 điện ảnh,
+chuẩn hóa đường dẫn FFmpeg an toàn trên Windows và dọn dẹp tài nguyên rác.
 """
 import glob
 import os
-import random
+import re
+import shutil
 import subprocess
 from engine.config import (
     FFMPEG_EXE,
@@ -18,6 +20,44 @@ from engine.effects import (
     is_video_file,
 )
 
+def sanitize_ffmpeg_path(path: str) -> str:
+    """
+    Chuẩn hóa đường dẫn an toàn cho cú pháp bộ lọc (filter) của FFmpeg trên Windows:
+    - Chuyển dấu phân cách ngược '\\' thành '/'
+    - Escape dấu hai chấm ':' của ổ đĩa thành '\\:' để FFmpeg không hiểu nhầm là tham số filter.
+    """
+    if not path:
+        return ""
+    # Chuẩn hóa về forward slash
+    norm = os.path.abspath(path).replace("\\", "/")
+    # Escape dấu : chưa được escape
+    sanitized = re.sub(r"(?<!\\):", r"\:", norm)
+    return sanitized
+
+def clean_temp_files(job_dir: str = None, root_dir: str = BASE_DIR):
+    """
+    Dọn dẹp triệt để các thư mục tạm và các file rác mồ côi (temp_*.mp3, tmp_*.mp3) tồn đọng.
+    """
+    # 1. Dọn thư mục job tạm thời
+    if job_dir and os.path.exists(job_dir):
+        shutil.rmtree(job_dir, ignore_errors=True)
+
+    # 2. Quét dọn các file rác mồ côi tại root_dir
+    if root_dir and os.path.exists(root_dir):
+        orphan_patterns = [
+            "temp_test_*.mp3",
+            "temp_*.mp3",
+            "tmp_*.mp3",
+            "tmp.mp3"
+        ]
+        for pat in orphan_patterns:
+            for orphan_file in glob.glob(os.path.join(root_dir, pat)):
+                try:
+                    if os.path.isfile(orphan_file):
+                        os.remove(orphan_file)
+                except Exception:
+                    pass
+
 def get_best_bgm_track(custom_path: str = None) -> str:
     """
     Lấy bản nhạc nền điện ảnh MP3 chất lượng cao nhất:
@@ -29,7 +69,6 @@ def get_best_bgm_track(custom_path: str = None) -> str:
     audio_dir = os.path.join(BASE_DIR, "assets", "audio")
     tracks = glob.glob(os.path.join(audio_dir, "*.mp3"))
     if tracks:
-        # Chọn ngẫu nhiên hoặc bài đầu tiên
         return tracks[0]
 
     return None
@@ -54,11 +93,10 @@ def render_scene_clip(
         raise FileNotFoundError(f"Không tìm thấy file hình ảnh/video tài nguyên: '{media_path}'")
 
     if is_video_file(media_path):
-        # Nguồn là Video footage chuyển động thật
         vf = get_cinematic_video_filter(duration, fps=fps, width=width, height=height)
         cmd = [
             FFMPEG_EXE, "-y",
-            "-stream_loop", "-1",  # Lặp lại nếu clip ngắn hơn câu thoại
+            "-stream_loop", "-1",
             "-i", media_path,
             "-i", audio_path,
             "-vf", vf,
@@ -73,7 +111,6 @@ def render_scene_clip(
             output_clip_path
         ]
     else:
-        # Nguồn là Hình ảnh tĩnh -> Áp dụng Ken Burns + Color Grade + Vignette
         vf = get_cinematic_image_filter(effect, duration, fps=fps, width=width, height=height)
         cmd = [
             FFMPEG_EXE, "-y",
@@ -105,7 +142,8 @@ def assemble_final_video(
     temp_dir: str = None
 ) -> str:
     """
-    Ghép nối các clips, hòa âm Voiceover + BGM MP3 điện ảnh và nung phụ đề ASS.
+    Ghép nối các clips, hòa âm Voiceover + BGM MP3 điện ảnh và nung phụ đề ASS an toàn.
+    Bắt và hiển thị toàn bộ stderr khi gặp sự cố FFmpeg.
     """
     if temp_dir is None:
         temp_dir = os.path.dirname(os.path.abspath(output_video_path))
@@ -126,10 +164,14 @@ def assemble_final_video(
         "-c", "copy",
         raw_merged_path
     ]
-    subprocess.run(concat_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        subprocess.run(concat_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    except subprocess.CalledProcessError as e:
+        err_msg = e.stderr.strip() if e.stderr else f"Mã lỗi {e.returncode}"
+        raise RuntimeError(f"FFmpeg assembly failed during concat:\n{err_msg}")
 
     # 3. Chuẩn hóa đường dẫn phụ đề cho FFmpeg filter
-    safe_sub_path = os.path.abspath(subtitles_path).replace("\\", "/").replace(":", "\\:") if subtitles_path else None
+    safe_sub_path = sanitize_ffmpeg_path(subtitles_path) if subtitles_path else None
 
     # 4. Hòa âm nhạc nền BGM thật và nung phụ đề
     if bgm_path and os.path.exists(bgm_path) and safe_sub_path and os.path.exists(subtitles_path):
@@ -168,5 +210,10 @@ def assemble_final_video(
             output_video_path
         ]
 
-    subprocess.run(final_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        subprocess.run(final_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    except subprocess.CalledProcessError as e:
+        err_msg = e.stderr.strip() if e.stderr else f"Mã lỗi {e.returncode}"
+        raise RuntimeError(f"FFmpeg assembly failed during final mix:\n{err_msg}")
+
     return output_video_path
