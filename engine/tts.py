@@ -51,12 +51,13 @@ async def synthesize_speech_with_words(
         .strip()
     )
     
-    alt_voice = VOICES.get("vi_nu", "vi-VN-HoaiMyNeural") if voice == VOICES.get("vi_nam", "vi-VN-NamMinhNeural") else VOICES.get("vi_nam", "vi-VN-NamMinhNeural")
     last_err = None
 
     for attempt in range(max_retries):
-        cur_voice = voice if attempt < 2 else alt_voice
-        use_wb = (attempt in (0, 2))
+        # Đảm bảo tính nhất quán danh tính giọng đọc xuyên suốt video: không đổi giới tính giữa chừng
+        cur_voice = voice
+        # Lần 0 thử với WordBoundary. Nếu máy chủ báo lỗi (NoAudioReceived), các lần sau chuyển sang luồng tiêu chuẩn và nội suy nhịp từ
+        use_wb = (attempt == 0)
         
         try:
             if os.path.exists(output_audio):
