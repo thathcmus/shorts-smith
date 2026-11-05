@@ -5,42 +5,42 @@
       "text": "Bạn có biết bí ẩn lớn nhất về nền văn minh Maya... chính là sự biến mất đột ngột của hàng triệu con người giữa rừng rậm?",
       "effect": "zoom_in_fast",
       "prompt": "Cinematic wide shot of colossal ancient Mayan pyramid El Castillo at Chichen Itza shrouded in mystical morning jungle mist, dramatic volumetric sunbeams, 8k, photorealistic, vertical composition",
-      "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_1.jpg"
+      "image": "sample_assets/007_nen_van_minh_maya\\007_nen_van_minh_maya_1.jpg"
     },
     {
       "role": "fact1",
       "text": "Họ xây dựng những đại kim tự tháp kỳ vĩ như Chichen Itza mà không cần dùng đến bánh xe hay công cụ kim loại!",
       "effect": "pan_down",
       "prompt": "Majestic towering Mayan stone temple pyramid rising above thick rainforest canopy, intricate carved glyphs, cinematic sunset lighting, 8k, photorealistic, vertical composition",
-      "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_2.jpg"
+      "image": "sample_assets/007_nen_van_minh_maya\\007_nen_van_minh_maya_2.jpg"
     },
     {
       "role": "anomaly",
       "text": "Kỳ lạ hơn, vào ngày xuân phân, bóng râm trên kim tự tháp Kukulkan tự chuyển động tạo thành hình mãng xà trườn xuống đáy đất!",
       "effect": "zoom_in_slow",
       "prompt": "Close-up of the shadow serpent phenomenon slithering down the balustrade of Kukulkan pyramid during equinox, dramatic golden hour shadows, cinematic, 8k, vertical composition",
-      "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_3.jpg"
+      "image": "sample_assets/007_nen_van_minh_maya\\007_nen_van_minh_maya_3.jpg"
     },
     {
       "role": "theory",
       "text": "Nhiều nhà khảo cổ đặt nghi vấn: Làm sao người Maya cổ đại tính toán được chu kỳ sao Kim và nhật thực chuẩn xác đến từng giây?",
       "effect": "zoom_out",
       "prompt": "Ancient Mayan astronomer priest studying glowing celestial charts and constellations atop a stone observatory Caracol, dramatic starry cosmos night, 8k, cinematic, vertical composition",
-      "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_4.jpg"
+      "image": "sample_assets/007_nen_van_minh_maya\\007_nen_van_minh_maya_4.jpg"
     },
     {
       "role": "coincidence",
       "text": "Bộ lịch đá của họ kết thúc một đại chu kỳ vào năm 2012, trùng khớp đáng sợ với vị trí Mặt Trời đi qua trung tâm dải Ngân Hà!",
       "effect": "pan_down",
       "prompt": "Intricately carved circular Mayan calendar stone etched with cosmic glyphs, illuminated by a celestial ray from the Milky Way galaxy, cinematic moody atmosphere, 8k, vertical composition",
-      "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_5.jpg"
+      "image": "sample_assets/007_nen_van_minh_maya\\007_nen_van_minh_maya_5.jpg"
     },
     {
       "role": "cta",
       "text": "Theo bạn, người Maya đã đi đâu, hay họ thực sự sở hữu tri thức ngoài hành tinh? Hãy để lại bình luận góc nhìn của bạn ngay!",
       "effect": "zoom_in_fast",
       "prompt": "Dramatic cinematic shot of glowing mystical ancient Mayan carved portal stone deep inside rainforest ruins, mysterious ethereal backlight, 8k, vertical composition",
-      "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_6.jpg"
+      "image": "sample_assets/007_nen_van_minh_maya\\007_nen_van_minh_maya_6.jpg"
     }
   ]
 }

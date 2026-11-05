@@ -31,17 +31,50 @@ def validate_image_file(image_path: str) -> bool:
     except Exception:
         return False
 
-def extract_search_terms(prompt: str) -> str:
-    """Loại bỏ các từ khóa phong cách chung để lấy thực thể chính phục vụ tìm kiếm ảnh tư liệu."""
+def extract_search_terms(prompt: str) -> list[str]:
+    """Trích xuất danh sách các cụm từ khóa tìm kiếm ưu tiên từ prompt."""
+    candidates = []
+    
+    # 1. Tìm tên riêng viết hoa (Chichen Itza, Kukulkan, Caracol, El Castillo, Maya, Mayan...)
+    named = re.findall(r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b', prompt)
+    filtered_named = [
+        e for e in named 
+        if e.lower() not in [
+            "cinematic", "dramatic", "vertical", "composition", "close", "wide", 
+            "shot", "majestic", "ancient", "intricate", "mystical", "ultra", "photo"
+        ]
+    ]
+    if filtered_named:
+        candidates.append(" ".join(filtered_named[:2]))
+
+    # 2. Làm sạch tính từ và thuật ngữ quay phim
     p = prompt.lower()
     for drop in [
         "cinematic", "8k", "dramatic lighting", "vertical composition",
         "dramatic light flicker", "hyper-detailed", "atmospheric", "volumetric light",
-        "close-up", "establishing shot", "concept art", "photorealistic", "ultra realistic"
+        "close-up", "establishing shot", "concept art", "photorealistic", "ultra realistic",
+        "wide shot", "shot of", "colossal", "majestic", "towering", "intricately", "carved",
+        "shrouded", "mystical", "sunset lighting", "golden hour", "phenomenon", "slithering",
+        "balustrade", "illuminated", "celestial ray", "moody atmosphere"
     ]:
-        p = p.replace(drop, "")
+        p = p.replace(drop, " ")
     words = [w for w in re.split(r"[^a-zA-Z0-9]+", p) if len(w) > 3]
-    return " ".join(words[:4]) or "history discovery"
+    if len(words) >= 2:
+        candidates.append(" ".join(words[:2]))
+    if words:
+        candidates.append(words[0])
+
+    candidates.append("Mayan pyramid")
+    candidates.append("Maya civilization")
+
+    # Loại bỏ trùng lặp giữ nguyên thứ tự
+    seen = set()
+    result = []
+    for c in candidates:
+        if c and c.lower() not in seen:
+            seen.add(c.lower())
+            result.append(c)
+    return result
 
 async def fetch_wikimedia_fallback(
     prompt: str,
@@ -50,49 +83,51 @@ async def fetch_wikimedia_fallback(
     height: int = 1920,
     session: aiohttp.ClientSession = None
 ) -> str:
-    """Tìm kiếm ảnh chất lượng cao trên Wikimedia Commons khi máy chủ AI bị giới hạn."""
-    query = extract_search_terms(prompt)
-    encoded_q = urllib.parse.quote(query)
-    api_url = f"https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrsearch={encoded_q}&gsrlimit=3&prop=imageinfo&iiprop=url&format=json"
-
+    """Tìm kiếm ảnh chất lượng cao trên Wikimedia Commons với hỗ trợ đa tầng từ khóa và thumbnail 1280px."""
+    queries = extract_search_terms(prompt)
     close_session = False
     if session is None:
         session = aiohttp.ClientSession()
         close_session = True
 
+    headers = {"User-Agent": "MediaProducerBot/1.0 (https://github.com/thathcmus; thathcmus@gmail.com)"}
+
     try:
-        headers = {"User-Agent": "MediaProducerAI/2.0 (Wikimedia Integration)"}
-        async with session.get(api_url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
-            if resp.status == 200:
-                data = await resp.json()
-                pages = data.get("query", {}).get("pages", {})
-                for page in pages.values():
-                    img_info = page.get("imageinfo", [])
-                    if img_info and "url" in img_info[0]:
-                        img_url = img_info[0]["url"]
-                        if img_url.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
-                            async with session.get(img_url, headers=headers, timeout=aiohttp.ClientTimeout(total=20)) as img_resp:
-                                if img_resp.status == 200:
-                                    raw_bytes = await img_resp.read()
-                                    raw_buf = io.BytesIO(raw_bytes)
-                                    with Image.open(raw_buf) as img:
-                                        img = img.convert("RGB")
-                                        w, h = img.size
-                                        target_ratio = width / height
-                                        if w / h > target_ratio:
-                                            new_w = int(h * target_ratio)
-                                            left = (w - new_w) // 2
-                                            img = img.crop((left, 0, left + new_w, h))
-                                        else:
-                                            new_h = int(w / target_ratio)
-                                            top = (h - new_h) // 2
-                                            img = img.crop((0, top, w, top + new_h))
-                                        img = img.resize((width, height), Image.Resampling.LANCZOS)
-                                        img.save(output_path, format="JPEG", quality=90)
-                                    if validate_image_file(output_path):
-                                        return output_path
-    except Exception:
-        pass
+        for query in queries:
+            encoded_q = urllib.parse.quote(query)
+            api_url = f"https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrsearch={encoded_q}&gsrlimit=3&prop=imageinfo&iiprop=url&iiurlwidth=1280&format=json"
+            try:
+                async with session.get(api_url, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as resp:
+                    if resp.status == 200:
+                        data = await resp.json()
+                        pages = data.get("query", {}).get("pages", {})
+                        for page in pages.values():
+                            img_info = page.get("imageinfo", [])
+                            if img_info:
+                                img_url = img_info[0].get("thumburl") or img_info[0].get("url")
+                                if img_url and any(img_url.lower().endswith(ext) or ext in img_url.lower() for ext in [".jpg", ".jpeg", ".png", ".webp"]):
+                                    async with session.get(img_url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as img_resp:
+                                        if img_resp.status == 200:
+                                            raw_bytes = await img_resp.read()
+                                            raw_buf = io.BytesIO(raw_bytes)
+                                            with Image.open(raw_buf) as img:
+                                                img = img.convert("RGB")
+                                                w, h = img.size
+                                                target_ratio = width / height
+                                                if w / h > target_ratio:
+                                                    new_w = int(h * target_ratio)
+                                                    left = (w - new_w) // 2
+                                                    img = img.crop((left, 0, left + new_w, h))
+                                                else:
+                                                    new_h = int(w / target_ratio)
+                                                    top = (h - new_h) // 2
+                                                    img = img.crop((0, top, w, top + new_h))
+                                                img = img.resize((width, height), Image.Resampling.LANCZOS)
+                                                img.save(output_path, format="JPEG", quality=90)
+                                            if validate_image_file(output_path):
+                                                return output_path
+            except Exception:
+                continue
     finally:
         if close_session:
             await session.close()
