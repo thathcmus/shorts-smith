@@ -70,6 +70,30 @@ def get_fallback_script(topic: str, style: str = "mystery") -> dict:
         ]
     }
 
+def is_script_vietnamese_fluent(scenes: list) -> bool:
+    """
+    Kiểm tra tính tự nhiên và ngữ nghĩa của câu thoại tiếng Việt:
+    - Loại bỏ các kịch bản chứa từ ngô nghê/ảo giác ("vô vẩn", "tứ quẩn", "thổi chiều", "khai hình", "hòm sao", "thật cấu", "thiên dương", "băng kẽ").
+    - Đảm bảo độ dài trung bình của từ hợp lý và tỷ lệ ký tự có dấu thanh tiếng Việt đạt chuẩn.
+    """
+    garbled_keywords = [
+        "vô vẩn", "tứ quẩn", "thổi chiều", "khai hình", "hòm sao",
+        "thật cấu", "thiên dương", "băng kẽ", "đồng thời hiện tượng băng",
+        "chục cổ trong"
+    ]
+    full_text = " ".join(s.get("text", "") for s in scenes).lower()
+    for bad in garbled_keywords:
+        if bad in full_text:
+            return False
+
+    # Kiểm tra tỷ lệ ký tự tiếng Việt có dấu
+    vn_marks = re.findall(r"[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]", full_text)
+    words = full_text.split()
+    if not words or len(vn_marks) / max(len(words), 1) < 0.3:
+        return False
+
+    return True
+
 def generate_script_from_topic(topic: str, style: str = "mystery") -> dict:
     """
     Tự động sinh kịch bản 6 cảnh từ chủ đề gợi ý qua dịch vụ AI văn bản miễn phí.
@@ -106,6 +130,7 @@ def generate_script_from_topic(topic: str, style: str = "mystery") -> dict:
                 and "scenes" in data
                 and len(data["scenes"]) == 6
                 and all(isinstance(s, dict) and s.get("text") and s.get("prompt") for s in data["scenes"])
+                and is_script_vietnamese_fluent(data["scenes"])
             ):
                 return data
     except Exception:

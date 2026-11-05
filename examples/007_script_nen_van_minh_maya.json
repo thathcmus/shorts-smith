@@ -2,44 +2,44 @@
   "scenes": [
     {
       "role": "hook",
-      "text": "Bạn biết chưa? Maya xây thành phố trôi giữa núi non – khởi điểm của thứ không thể tin nổi!",
+      "text": "Bạn có biết bí ẩn lớn nhất về nền văn minh Maya... chính là sự biến mất đột ngột của hàng triệu con người giữa rừng rậm?",
       "effect": "zoom_in_fast",
-      "prompt": "A giant Maya metropolis appearing as if floating over a cloud‑filled mountain range, cinematic, 8k, dramatic lighting, vertical composition.",
+      "prompt": "Cinematic wide shot of colossal ancient Mayan pyramid El Castillo at Chichen Itza shrouded in mystical morning jungle mist, dramatic volumetric sunbeams, 8k, photorealistic, vertical composition",
       "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_1.jpg"
     },
     {
       "role": "fact1",
-      "text": "Họ khắc hòm sao trên đá, duy nhất có trong toàn Thiên Dương – chỉ một chục cổ trong kho tàng khám phá!",
+      "text": "Họ xây dựng những đại kim tự tháp kỳ vĩ như Chichen Itza mà không cần dùng đến bánh xe hay công cụ kim loại!",
       "effect": "pan_down",
-      "prompt": "A towering Maya stone slab etched with detailed astronomical charts, cinematic, 8k, dramatic lighting, vertical composition.",
+      "prompt": "Majestic towering Mayan stone temple pyramid rising above thick rainforest canopy, intricate carved glyphs, cinematic sunset lighting, 8k, photorealistic, vertical composition",
       "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_2.jpg"
     },
     {
       "role": "anomaly",
-      "text": "Thật cấu? Bản đồ tay của họ trùng khớp với bản đồ thiên văn thời xa xưa nhưng đều vô vẩn, chữ tứ quẩn mênh mông!",
+      "text": "Kỳ lạ hơn, vào ngày xuân phân, bóng râm trên kim tự tháp Kukulkan tự chuyển động tạo thành hình mãng xà trườn xuống đáy đất!",
       "effect": "zoom_in_slow",
-      "prompt": "An ancient Maya codex with perplexing glyphs and star maps humming with otherworldly energy, cinematic, 8k, dramatic lighting, vertical composition.",
+      "prompt": "Close-up of the shadow serpent phenomenon slithering down the balustrade of Kukulkan pyramid during equinox, dramatic golden hour shadows, cinematic, 8k, vertical composition",
       "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_3.jpg"
     },
     {
       "role": "theory",
-      "text": "Quả thực, một giả thuyết thổi chiều: Maya sở hữu bộ trạm chiếu quanh trục “hoàng đạo” – tạo nên ngọn lửa thời gian xuyên khắp vũ trụ!",
+      "text": "Nhiều nhà khảo cổ đặt nghi vấn: Làm sao người Maya cổ đại tính toán được chu kỳ sao Kim và nhật thực chuẩn xác đến từng giây?",
       "effect": "zoom_out",
-      "prompt": "A mysterious Maya satellite complex, projecting shimmering beams into a starry backdrop, cinematic, 8k, dramatic light flicker, vertical composition.",
+      "prompt": "Ancient Mayan astronomer priest studying glowing celestial charts and constellations atop a stone observatory Caracol, dramatic starry cosmos night, 8k, cinematic, vertical composition",
       "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_4.jpg"
     },
     {
       "role": "coincidence",
-      "text": "Nghe này: khi nhà khảo cổ mở một tảng đá mới, băng đen cứ lấp lánh như mưa thép rơi – đồng thời hiện tượng băng kẽ lạnh à?",
+      "text": "Bộ lịch đá của họ kết thúc một đại chu kỳ vào năm 2012, trùng khớp đáng sợ với vị trí Mặt Trời đi qua trung tâm dải Ngân Hà!",
       "effect": "pan_down",
-      "prompt": "An archaeological dig revealing a fractured stone with dazzling ice crystals hovering, cinematic, 8k, dramatic lighting, vertical composition.",
+      "prompt": "Intricately carved circular Mayan calendar stone etched with cosmic glyphs, illuminated by a celestial ray from the Milky Way galaxy, cinematic moody atmosphere, 8k, vertical composition",
       "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_5.jpg"
     },
     {
       "role": "cta",
-      "text": "Bạn muốn thám hiểm hơn? Đăng ký ngay, bước vào hành trình khám phá bí mật Maya mà hôm nay vẫn chưa được khai hình!",
+      "text": "Theo bạn, người Maya đã đi đâu, hay họ thực sự sở hữu tri thức ngoài hành tinh? Hãy để lại bình luận góc nhìn của bạn ngay!",
       "effect": "zoom_in_fast",
-      "prompt": "Maya ruins illuminated by glowing glyphs, with a bold call‑to‑action overlay, cinematic, 8k, dramatic lighting, vertical composition.",
+      "prompt": "Dramatic cinematic shot of glowing mystical ancient Mayan carved portal stone deep inside rainforest ruins, mysterious ethereal backlight, 8k, vertical composition",
       "image": "E:\\7_Media\\sample_assets\\007_nen_van_minh_maya\\007_nen_van_minh_maya_6.jpg"
     }
   ]

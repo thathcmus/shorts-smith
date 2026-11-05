@@ -68,3 +68,18 @@ def test_backward_compatibility_find_script():
 
     output_name = derive_default_output_name(found_001)
     assert output_name.startswith("001_video_")
+
+
+def test_is_script_vietnamese_fluent_rejects_garbled_vocabulary():
+    from engine.script_generator import is_script_vietnamese_fluent
+    garbled_scenes = [
+        {"text": "Bản đồ đều vô vẩn, chữ tứ quẩn mênh mông!"},
+        {"text": "Họ khắc hòm sao trên đá trong toàn Thiên Dương"},
+    ]
+    assert is_script_vietnamese_fluent(garbled_scenes) is False
+
+    fluent_scenes = [
+        {"text": "Bạn có biết người Maya đã xây dựng những kim tự tháp kỳ vĩ sâu trong rừng thẳm?"},
+        {"text": "Hệ thống lịch thiên văn của họ chính xác đến từng chu kỳ mặt trời và các vì sao!"},
+    ]
+    assert is_script_vietnamese_fluent(fluent_scenes) is True
