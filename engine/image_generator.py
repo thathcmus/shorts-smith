@@ -161,8 +161,11 @@ async def fetch_image(
                                     pass
                             last_error = ValueError("Tệp ảnh tải về bị hỏng hoặc định dạng không hợp lệ")
                     elif resp.status in (402, 429, 503):
-                        # Giới hạn lượt miễn phí hoặc máy chủ quá tải -> kích hoạt fallback ngay
                         last_error = RuntimeError(f"HTTP {resp.status} (Rate limited / Quota reached)")
+                        # Nếu còn lượt retry, không thoát vội mà đợi backoff rồi thử lại
+                        if attempt < max_retries - 1:
+                            await asyncio.sleep(2.0 * (attempt + 1))
+                            continue
                         break
                     else:
                         last_error = RuntimeError(f"HTTP {resp.status} từ máy chủ sinh ảnh")
@@ -191,20 +194,23 @@ async def generate_images_parallel(
     target_dir: str,
     prefix: str = "scene",
     width: int = 1080,
-    height: int = 1920
+    height: int = 1920,
+    concurrency: int = 1,
+    delay: float = 1.5
 ) -> list[str]:
     """
-    Kích hoạt tải các ảnh cho các cảnh kịch bản chưa có ảnh.
+    Kích hoạt tải các ảnh cho các cảnh kịch bản chưa có ảnh với điều tiết nhịp độ (throttling),
+    tránh chạm trần rate-limit IP của các dịch vụ AI miễn phí.
     Cập nhật trực tiếp đường dẫn ảnh vào scene['image'].
     """
     os.makedirs(target_dir, exist_ok=True)
+    sem = asyncio.Semaphore(concurrency)
+
     async with aiohttp.ClientSession() as session:
-        tasks = []
         for idx, scene in enumerate(scenes):
             existing_img = scene.get("image")
             out_file = os.path.join(target_dir, f"{prefix}_{idx+1}.jpg")
             
-            # Nếu đã có file ảnh tồn tại và hợp lệ thì bỏ qua không cần tải lại
             if existing_img and os.path.exists(existing_img) and validate_image_file(existing_img):
                 continue
 
@@ -213,9 +219,9 @@ async def generate_images_parallel(
                 prompt = f"Cinematic dramatic 8k vertical shot representing: {scene.get('text', 'mysterious discovery')}"
 
             scene["image"] = out_file
-            tasks.append(fetch_image(prompt, out_file, width=width, height=height, session=session))
-
-        if tasks:
-            await asyncio.gather(*tasks)
+            async with sem:
+                await fetch_image(prompt, out_file, width=width, height=height, session=session)
+                if delay > 0 and idx < len(scenes) - 1:
+                    await asyncio.sleep(delay)
 
     return [s.get("image") for s in scenes if s.get("image")]

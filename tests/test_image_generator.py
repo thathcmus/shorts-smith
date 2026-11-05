@@ -70,7 +70,7 @@ async def test_fetch_image_retry_on_http_error(temp_test_dir, mock_image_bytes):
     mock_session.get.return_value.__aenter__.side_effect = [fail_resp, success_resp]
 
     with patch("asyncio.sleep", new_callable=AsyncMock):
-        result_path = await fetch_image(prompt, output_file, max_retries=3, session=mock_session)
+        result_path = await fetch_image(prompt, output_file, max_retries=3, session=mock_session, allow_fallback=False)
 
     assert result_path == output_file
     assert os.path.exists(output_file)
@@ -112,3 +112,46 @@ async def test_generate_images_parallel(temp_test_dir, sample_scene_payload, moc
         assert "image" in scene
         assert os.path.exists(scene["image"])
         assert f"001_dead_internet_{idx+1}.jpg" in scene["image"]
+
+
+@pytest.mark.asyncio
+async def test_generate_images_throttled_sequential(temp_test_dir, mock_image_bytes):
+    calls = []
+    async def mock_fetch(prompt, out_path, **kwargs):
+        calls.append(out_path)
+        with open(out_path, "wb") as f:
+            f.write(mock_image_bytes)
+        return out_path
+
+    scenes = [{"prompt": f"test prompt {i}"} for i in range(3)]
+    with patch("engine.image_generator.fetch_image", side_effect=mock_fetch):
+        res = await generate_images_parallel(
+            scenes,
+            temp_test_dir,
+            prefix="throttle_test",
+            delay=0.05
+        )
+    assert len(res) == 3
+    assert len(calls) == 3
+
+@pytest.mark.asyncio
+async def test_fetch_image_retries_on_rate_limit_402_and_succeeds(temp_test_dir, mock_image_bytes):
+    output_file = os.path.join(temp_test_dir, "test_rate_retry.jpg")
+    prompt = "Ancient temple test"
+
+    rate_resp = AsyncMock()
+    rate_resp.status = 402
+
+    ok_resp = AsyncMock()
+    ok_resp.status = 200
+    ok_resp.read = AsyncMock(return_value=mock_image_bytes)
+
+    mock_session = MagicMock()
+    mock_session.get.return_value.__aenter__.side_effect = [rate_resp, ok_resp]
+
+    with patch("asyncio.sleep", new_callable=AsyncMock):
+        result_path = await fetch_image(prompt, output_file, max_retries=3, session=mock_session, allow_fallback=False)
+
+    assert result_path == output_file
+    assert os.path.exists(output_file)
+    assert mock_session.get.call_count == 2
